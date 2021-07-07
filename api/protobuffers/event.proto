@@ -1,0 +1,317 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+message UserInfo {
+  uint32 uid = 1;
+  string uname = 2;
+  string avatarUrl = 3;
+  string motto = 4;
+  string sex = 5;
+  uint32 type = 6;
+  string orgName = 7;
+}
+
+message Event {
+  string eid = 1;
+  string title = 2;
+  uint32 type = 3;
+  repeated string tags = 4;
+  string createTime = 5;
+  string updateTime = 6;
+  uint32 getCounter = 7;
+  uint32 watchCounter = 8;
+  uint32 commentCounter = 9;
+  bool isGet = 10;
+  bool isCollect = 11;
+  UserInfo userinfo = 12;
+}
+
+message EventNotice {
+    message File {
+        string name = 1;
+        string type = 2;
+        string location = 3;
+    }
+
+    repeated File files = 1;
+}
+
+message EventVote {
+    bool multiple = 1;
+    uint32 allowedNumber = 2;
+    bool isOver = 3;
+    string deadline = 4;
+    repeated string options = 5;
+    uint32 participatedNumber = 6;
+    bool isParticipated = 7;
+    repeated uint32 selectedNo = 8;
+    repeated uint32 result = 9;
+}
+
+message EventSortition {
+    uint32 requiredNumber = 1;
+    bool allowedCancel = 2;
+    bool isOver = 3;
+    string deadline = 4;
+    bool isParticipated = 5;
+    bool isSelected = 6;
+    uint32 participatedNumber = 7;
+    repeated string result = 8;
+}
+
+message EventParticipation {
+    uint32 requiredNumber = 1;
+    bool allowedCancel = 2;
+    bool isOver = 3;
+    string deadline = 4;
+    bool isParticipated = 5;
+    uint32 participatedNumber = 6;
+    repeated string result = 7; 
+}
+
+message EventSubReq {
+  uint32 offset = 1;
+  uint32 number = 2;
+}
+
+message EventSubRes {
+  uint32 unread = 1;
+  repeated Event events = 2;
+}
+
+message EventDelReq {
+  uint32 type = 1;
+  string eid = 2;
+}
+
+message EventDelRes {}
+
+message EventDetailReq {
+    uint32 type = 1;
+    string eid = 2;
+}
+
+message EventDetailRes {
+    string eid = 1;
+    string title = 2;
+    string content = 3;
+    uint32 type = 4;
+    repeated string tags = 5;
+    string createTime = 6;
+    string updateTime = 7;
+    uint32 getCounter = 8;
+    uint32 watchCounter = 9;
+    uint32 commentCounter = 10;
+    bool isGet = 11;
+    bool isCollect = 12;
+    UserInfo userinfo = 13;
+    google.protobuf.Any eventDetail = 14;
+}
+
+message EventNoticePublishReq {
+    string title = 1;
+    string content = 2;
+    repeated string tags = 3;
+    repeated string files = 4;
+}
+
+message EventNoticePublishRes {
+    string eid = 1;
+    uint32 type = 2;
+}
+
+message EventNoticeRepairReq {
+    string eid = 1;
+    string title = 2;
+    string content = 3;
+    repeated string tags = 4;
+    repeated string files = 5; 
+}
+
+message EventNoticeRepairRes {
+    string eid = 1;
+    uint32 frequency = 2;
+}
+
+message EventVotePublishReq {
+    string title = 1;
+    string content = 2;
+    repeated string tags = 3;
+    uint32 allowedNumber = 4;
+    string deadline = 5;
+    repeated string options = 6;
+}
+
+message EventVotePublishRes {
+    string eid = 1;
+    uint32 type = 2;
+}
+
+message EventVoteRepairReq {
+    string eid = 1;
+    string title = 2;
+    string content = 3;
+    repeated string tags = 4;
+    uint32 allowedNumber = 5;
+    string deadline = 6;
+    repeated string options = 7;
+}
+
+message EventVoteRepairRes {
+    string eid = 1;
+    uint32 frequency = 2;
+}
+
+
+message EventRandomPublishReq {
+    string title = 1;
+    string content = 2;
+    repeated string tags = 3;
+    uint32 requiredNumber = 4;
+    bool allowedCancel = 5;
+    string deadline = 6;
+}
+
+message EventRandomPublishRes {
+    string eid = 1;
+    uint32 type = 2;
+}
+
+message EventRandomRepairReq {
+    string eid = 1;
+    string title = 2;
+    string content = 3;
+    repeated string tags = 4;
+    uint32 requiredNumber = 5;
+    bool allowedCancel = 6;
+    string deadline = 7;
+}
+
+message EventRandomRepairRes {
+    string eid = 1;
+    uint32 frequency = 2;
+}
+
+
+message EventApplyPublishReq {
+    string title = 1;
+    string content = 2;
+    repeated string tags = 3;
+    uint32 requiredNumber = 4;
+    bool allowedCancel = 5;
+    string deadline = 6;
+}
+
+message EventApplyPublishRes {
+    string eid = 1;
+    uint32 type = 2;
+}
+
+message EventApplyRepairReq {
+    string eid = 1;
+    string title = 2;
+    string content = 3;
+    repeated string tags = 4;
+    uint32 requiredNumber = 5;
+    bool allowedCancel = 6;
+    string deadline = 7;
+}
+
+message EventApplyRepairRes {
+    string eid = 1;
+    uint32 frequency = 2;
+}
+
+
+message EventSearchReq {
+    uint32 type = 1;
+    string startTime = 2;
+    string endTime = 3;
+    string query = 4;
+}
+
+message EventSearchRes {
+    uint32 total = 1;
+    repeated Event match = 2;
+}
+
+
+message EventGetUserPublishReq {
+    uint32 uid = 1;
+    uint32 offset = 2;
+    uint32 number = 3;
+}
+
+message EventGetUserPublishRes {
+    uint32 total = 1;
+    message LocalEvent {
+        string eid = 1;
+        string title = 2;
+        uint32 type = 3;
+        repeated string tags = 4;
+        uint32 getCounter = 5;
+        uint32 watchCounter = 6;
+        uint32 commentCounter = 7;
+        string createTime = 8;
+        string updateTime = 9;
+        bool isGet = 10;
+        bool isCollect = 11;
+    }
+
+    repeated LocalEvent result = 2;
+}
+
+message EventGetUserCollectReq {
+    uint32 uid = 1;
+    uint32 offset = 2;
+    uint32 number = 3;
+}
+
+message EventGetUserCollectRes {
+    uint32 total = 1;
+    repeated Event result = 2;
+}
+
+message EventArchiveStarReq {
+    string eid = 1;
+    uint32 type = 2;
+}
+
+message EventArchiveStarRes {
+    bool status = 1;
+}
+
+
+message EventArchiveReplyAddReq {
+    string eid = 1;
+    optional string root = 2;
+    optional string parent = 3;
+    string message = 4;
+}
+
+message EventArchiveReplyAddRes {
+    string rid = 1;
+    string message = 2;
+    string datetime = 3;
+    bool needCaptcha = 4;
+}
+
+
+message EventArchiveReplyDelReq {
+    string eid = 1;
+    string rid = 2;
+}
+
+message EventArchiveReplyDelRes {
+    bool needCaptcha = 1;
+}
+
+message EventArchiveCollectReq {
+    string eid = 1;
+    uint32 type = 2;
+}
+
+message EventArchiveCollectRes {
+    bool status = 1;
+}

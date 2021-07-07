@@ -22,7 +22,7 @@ type publishResult struct {
 	Type           int8     `json:"type" form:"type"`
 	Tags           []string `json:"tags" form:"tags"`
 	WatchCounter   int      `json:"watch_counter" form:"watch_counter"`
-	StarCounter    int      `json:"star_counter" form:"star_counter"`
+	GetCounter    int      `json:"get_counter" form:"get_counter"`
 	CommentCounter int      `json:"comment_counter" form:"comment_counter"`
 	CreateTime     string   `json:"create_time" form:"create_time"`
 	UpdateTime     string   `json:"update_time" form:"update_time"`

@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+message UserInfo {
+  uint32 uid = 1;
+  string uname = 2;
+  string avatar = 3;
+  string motto = 4;
+  string sex = 5;
+  uint32 type = 6;
+  string orgName = 7;
+}
+
+message Video {
+  string vid = 1;
+  string title = 2;
+  string cover = 3;
+  repeated string tags = 4;
+  uint32 starCounter = 5;
+  uint32 watchCounter = 6;
+  uint32 commentCounter = 7;
+  string collectTime = 8;
+  string createTime = 9;
+  string updateTime = 10;
+  bool isGet = 11;
+  bool isCollect = 12;
+  UserInfo userinfo = 13;
+}
+
+message VideoGetReq {
+  uint32 number = 1;
+  optional string pointer = 2;
+}
+
+message VideoGetRes {
+  string pointer = 1;
+  bool captcha = 2;
+  repeated Video result = 3;
+}
+
+message VideoUploadReq {
+  string title = 1;
+  repeated string tags = 2;
+  string file = 3;
+  optional string location = 4;
+}
+
+message VideoUploadRes { string vid = 1; }
+
+message VideoDeleteReq { string vid = 1; }
+
+message VideoDeleteRes {}
+
+message VideoSearchReq {
+  uint32 sortType = 1;
+  string query = 2;
+  uint32 offset = 3;
+  uint32 number = 4;
+}
+
+message VideoSearchRes {
+  bool captcha = 1;
+  repeated Video result = 2;
+}
+
+message VideoGetUserPublishReq {
+  uint32 uid = 1;
+  uint32 offset = 2;
+  uint32 number = 3;
+}
+
+message VideoGetUserPublishRes {
+  uint32 total = 1;
+  message LocalVideo {
+    string vid = 1;
+    string title = 2;
+    string cover = 3;
+    repeated string tags = 4;
+    uint32 watchCounter = 5;
+    uint32 starCounter = 6;
+    uint32 commentCounter = 7;
+    string createTime = 8;
+    string updateTime = 9;
+  }
+  repeated LocalVideo result = 2;
+}
+
+message VideoGetUserCollectReq {
+  uint32 uid = 1;
+  uint32 offset = 2;
+  uint32 number = 3;
+}
+
+message VideoGetUserCollectRes {
+  uint32 total = 3;
+  repeated Video result = 2;
+}

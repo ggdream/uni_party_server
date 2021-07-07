@@ -1,9 +1,8 @@
 package event
 
-
 // EventArchiveReplyAddReqModel 添加评论：请求
 type EventArchiveReplyAddReqModel struct {
-	Vid     string `json:"vid" form:"vid"`
+	Eid     string `json:"eid" form:"eid"`
 	Root    string `json:"root" form:"root"`
 	Parent  string `json:"parent" form:"parent"`
 	Message string `json:"message" form:"message"`
@@ -19,7 +18,7 @@ type EventArchiveReplyAddResModel struct {
 
 // EventArchiveReplyDelReqModel 删除评论：请求
 type EventArchiveReplyDelReqModel struct {
-	Vid string `json:"vid" form:"vid"`
+	Eid string `json:"eid" form:"eid"`
 	Rid string `json:"rid" form:"rid"`
 }
 

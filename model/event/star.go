@@ -1,9 +1,8 @@
 package event
 
-
 // EventArchiveStarReqModel 给消息点赞（get）：请求
 type EventArchiveStarReqModel struct {
-	Vid  string `json:"vid" form:"vid"`
+	Eid  string `json:"eid" form:"eid"`
 	Type int8   `json:"type" form:"type"`
 }
 

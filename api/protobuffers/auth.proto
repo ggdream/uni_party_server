@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+message LoginCipherReq {
+  string account = 1;
+  string password = 2;
+}
+
+message LoginCipherRes {
+  bool needCaptcha = 1;
+  string token = 2;
+}
+
+message LoginCodeReq {
+  string deviceCode = 1;
+  string smsCode = 2;
+}
+
+message LoginCodeRes {
+  bool needCaptcha = 1;
+  string token = 2;
+}
+
+message SendPhoneCodeReq { string phone = 1; }
+
+message SendPhoneCodeRes { string deviceCode = 1; }
+
+message SendEMailCodeReq { string email = 1; }
+
+message SendEMailCodeRes { string deviceCode = 1; }

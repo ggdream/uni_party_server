@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+
+message StarReq {
+    string vid = 1;
+    int32 type = 2;
+}
+
+message StarRes {
+    bool status = 1;
+}
+
+message ReplyAddReq {
+    string vid = 1;
+    string message = 2;
+    optional string root = 3;
+    optional string parent = 4;
+}
+
+message ReplyAddRes {
+    string rid = 1;
+    string message = 2;
+    string datetime = 3;
+    bool needCaptcha = 4;
+}
+
+message ReplyDelReq {
+    string vid = 1;
+    string rid = 2;
+}
+
+message ReplyDelRes {
+    bool needCaptcha = 1;
+}
+
+message CollectReq {
+    string vid = 1;
+    int32 type = 2;
+}
+
+message CollectRes {
+    bool status = 1;
+}
+
+message BehaviorSearchReq {
+    string query = 1;
+}
+
+message BehaviorSearchRes {}
+
+message BehaviorTimeReq {
+    string vid = 1;
+}
+
+message BehaviorTimeRes {}

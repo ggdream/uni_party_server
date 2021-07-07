@@ -3,7 +3,7 @@ package event
 
 // EventArchiveCollectReqModel 收藏：请求
 type EventArchiveCollectReqModel struct {
-	Vid  string `json:"vid" form:"vid"`
+	Eid  string `json:"eid" form:"eid"`
 	Type int8   `json:"type" form:"type"`
 }
 

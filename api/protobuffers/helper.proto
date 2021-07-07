@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+message HelperProtocolUserReq { string version = 1; }
+
+message HelperProtocolUserRes { string content = 1; }
+
+message HelperProtocolServiceReq { string version = 1; }
+
+message HelperProtocolServiceRes { string content = 1; }
+
+message HelperNewVersionReq {}
+
+message HelperNewVersionRes {
+  string version = 1;
+  string content = 2;
+  string datetime = 3;
+}
+
+message HelperAllVersionReq {}
+
+message HelperAllVersionRes {
+  message Version {
+    string version = 1;
+    string content = 2;
+    string datetime = 3;
+  }
+  repeated Version result = 1;
+}
+
+message HelperAboutUsReq {}
+
+message HelperAboutUsRes { string content = 1; }
+
+message HelperContactUsReq {}
+
+message HelperContactUsRes {
+  string phone = 1;
+  message EMail {
+    string Feedback = 1;
+    string authentication = 2;
+    string cooperation = 3;
+  }
+  EMail email = 2;
+}
+
+message HelperFeedback {
+    uint32 type = 1;
+    string title = 2;
+    string content = 3;
+    optional string email = 4;
+}
