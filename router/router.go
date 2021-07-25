@@ -23,16 +23,16 @@ func (r *Router) Register() {
 		archive := erv1.Group("/archive")
 
 		// 点赞
-		archive.POST("/star")
+		archive.POST("/star")				// 视频点赞表、视频点赞列表、视频表
 
 		// 添加评论
-		archive.POST("/reply/add")
+		archive.POST("/reply/add")		// 视频祖宗评论表、视频子孙评论表
 
 		// 取消评论
-		archive.POST("/reply/del")
+		archive.POST("/reply/del")		// 视频祖宗评论表、视频子孙评论表
 
 		// 收藏
-		archive.POST("/collect")
+		archive.POST("/collect")			// 视频收藏表
 
 		// 收集用户搜索行为
 		archive.POST("/behavior/search")
@@ -46,10 +46,10 @@ func (r *Router) Register() {
 		auth := erv1.Group("/auth")
 
 		// 密码登录
-		auth.POST("/login/cipher")
+		auth.POST("/login/cipher")		// 用户登录表
 
 		// 验证码登录
-		auth.POST("/login/code")
+		auth.POST("/login/code")			// 用户登录表[、用户地址表+用户信息表]
 
 		// 获取手机验证码
 		auth.GET("/login/code/phone")
@@ -78,7 +78,7 @@ func (r *Router) Register() {
 		chat := erv1.Group("/chat")
 
 		// 建立WebSocket连接
-		chat.GET("/connect")
+		chat.GET("/connect")				// 聊天消息表(单聊) OR 聊天消息表(群聊)
 	}
 
 	// v1 消息业务
@@ -86,49 +86,49 @@ func (r *Router) Register() {
 		event := erv1.Group("/events")
 
 		// 获取订阅消息
-		event.GET("/sub")
+		event.GET("/sub")						// 用户订阅列表
 
 		// 删除消息
-		event.POST("/delete")
+		event.POST("/delete")					// 消息总表、用户订阅列表
 
 		// 获取通知消息详情
-		event.GET("/notice/detail")
+		event.GET("/notice/detail")			// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 发布通知消息
-		event.POST("/notice/publish")
+		event.POST("/notice/publish")			// 消息总表、用户发布列表
 
 		// 修改通知消息
-		event.POST("/notice/repair")
+		event.POST("/notice/repair")			// 消息总表、用户发布内容表
 
 		// 获取投票详情
-		event.GET("/vote/detail")
+		event.GET("/vote/detail")				// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 发布投票消息
-		event.POST("/vote/publish")
+		event.POST("/vote/publish")			// 消息总表、用户发布列表
 
 		// 修改投票消息
-		event.POST("/vote/repair")
+		event.POST("/vote/repair")			// 消息总表、用户发布内容表
 
 		// 获取随机详情
-		event.GET("/sortition/detail")
+		event.GET("/sortition/detail")		// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 发布随机消息
-		event.POST("/sortition/publish")
+		event.POST("/sortition/publish")		// 消息总表、用户发布列表
 
 		// 修改随机消息
-		event.POST("/sortition/repair")
+		event.POST("/sortition/repair")		// 消息总表、用户发布内容表
 
 		// 获取报名详情
-		event.GET("/participation/detail")
+		event.GET("/participation/detail")	// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 发布报名消息
-		event.POST("/participation/publish")
+		event.POST("/participation/publish")	// 消息总表、用户发布列表
 
 		// 修改报名消息
-		event.POST("/participation/repair")
+		event.POST("/participation/repair")	// 消息总表、用户发布内容表
 
 		// 搜索消息
-		event.GET("/search")
+		event.GET("/search")					// 用户订阅列表、ES匹配
 
 		// 获取用户发布的消息
 		event.GET("/users/publications")
@@ -136,17 +136,19 @@ func (r *Router) Register() {
 		// 获取用户收藏的消息
 		event.GET("/users/collections")
 
-		// 点赞消息
-		event.POST("/archive/star")
+		// Get消息
+		event.POST("/archive/star")			// 确认消息
 
+		// Deprecated
 		// 给消息添加评论
 		event.POST("/archive/reply/add")
 
+		// Deprecated
 		// 给消息删除评论
 		event.POST("/archive/reply/del")
 
-		// 收藏消息
-		event.POST("/archive/collect")
+		// 关注消息
+		event.POST("/archive/collect")		// 用户的关注列表、消息的关注列表
 	}
 
 	// v1 辅助业务
@@ -183,49 +185,52 @@ func (r *Router) Register() {
 		user.GET("/")
 
 		// 获取用户的粉丝信息
-		user.GET("/followers")
+		user.GET("/followers")		// 关注表、用户信息表
 
 		// 获取用户的关注信息
-		user.GET("/following")
+		user.GET("/following")		// 关注表、用户信息表
 
 		// 关注某个用户
-		user.POST("/following/act")
+		user.POST("/following/act")	// 关注表、用户信息表
+
+		// 获取好友（双向关注）
+		user.GET("/friends")			// 关注表、用户信息表
 
 		// 获取用户发布的消息
-		user.GET("/events/publications")
+		user.GET("/events/publications")	// 用户的发布内容、消息总表
 
-		// 获取用户收藏的消息
-		user.GET("/events/collections")
+		// 获取用户关注的消息
+		user.GET("/events/collections")	// 用户的关注列表、消息的关注列表
 
 		// 获取用户发布的视频
-		user.GET("/videos/publications")
+		user.GET("/videos/publications")	// 用户发布视频缓存表、视频表
 
 		// 获取用户收藏的视频
-		user.GET("/videos/collections")
+		user.GET("/videos/collections")	// 用户收藏视频缓存表、视频收藏表
 
 		// 搜索
-		user.GET("/search")
+		user.GET("/search")				// 用户缓存表、用户信息表、ES模糊匹配
 
 		// 更改用户头像
-		user.POST("/profile/avatar")
+		user.POST("/profile/avatar")		// 用户信息表、用户缓存表
 
 		// 更改用户信息
-		user.POST("/profile/update")
+		user.POST("/profile/update")		// 用户信息表、用户缓存表
 
 		// 获取主题色
-		user.GET("/setttings/theme/get")
+		user.GET("/setttings/theme/get")		// 应用设置表
 
 		// 设置主题色
-		user.POST("/setttings/theme/set")
+		user.POST("/setttings/theme/set")		// 应用设置表
 
 		// 获取邮箱推送状态
-		user.GET("/setttings/push")
+		user.GET("/setttings/push")			// 应用设置表
 
 		// 设置消息推送
-		user.POST("/setttings/push/event")
+		user.POST("/setttings/push/event")	// 应用设置表
 
 		// 设置视频推送
-		user.POST("/setttings/push/video")
+		user.POST("/setttings/push/video")	// 应用设置表
 	}
 
 	// v1 短视频业务
@@ -236,7 +241,7 @@ func (r *Router) Register() {
 		video.GET("/get")
 
 		// 上传视频
-		video.POST("/upload")
+		video.POST("/upload")				// 视频上传待审核表
 
 		// 删除视频
 		video.POST("/delete")
