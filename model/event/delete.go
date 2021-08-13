@@ -1,11 +1,10 @@
 package event
 
 
-// EventDeleteReqModel 删除消息：请求
-type EventDeleteReqModel struct {
-	Type	int8	`json:"type" form:"type"`
+// DeleteReqModel 删除消息：请求
+type DeleteReqModel struct {
 	EID		string	`json:"eid" form:"eid"`
 }
 
-// EventDeleteResModel 删除消息：响应
-type EventDeleteResModel struct {}
+// DeleteResModel 删除消息：响应
+type DeleteResModel struct {}

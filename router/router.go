@@ -1,6 +1,9 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	chat2 "gateway/controller/chat"
+	"github.com/gin-gonic/gin"
+)
 
 // Router 路由器
 type Router struct {
@@ -19,8 +22,8 @@ func (r *Router) Register() {
 	erv1 := externalRoutes.Group("/v1")
 
 	// v1 归档业务
+	archive := erv1.Group("/archive")
 	{
-		archive := erv1.Group("/archive")
 
 		// 点赞
 		archive.POST("/star")				// 视频点赞表、视频点赞列表、视频表
@@ -42,8 +45,8 @@ func (r *Router) Register() {
 	}
 
 	// v1 认证业务
+	auth := erv1.Group("/auth")
 	{
-		auth := erv1.Group("/auth")
 
 		// 密码登录
 		auth.POST("/login/cipher")		// 用户登录表
@@ -74,16 +77,16 @@ func (r *Router) Register() {
 	}
 
 	// v1 聊天业务
+	chat := erv1.Group("/chat")
 	{
-		chat := erv1.Group("/chat")
 
 		// 建立WebSocket连接
-		chat.GET("/connect")				// 聊天消息表(单聊) OR 聊天消息表(群聊)
+		chat.GET("/connect", chat2.ChatHandler)				// 聊天消息表(单聊) OR 聊天消息表(群聊)
 	}
 
 	// v1 消息业务
+	event := erv1.Group("/events")
 	{
-		event := erv1.Group("/events")
 
 		// 获取订阅消息
 		event.GET("/sub")						// 用户订阅列表
@@ -152,8 +155,8 @@ func (r *Router) Register() {
 	}
 
 	// v1 辅助业务
+	helper := erv1.Group("/helpers")
 	{
-		helper := erv1.Group("/helpers")
 
 		// 获取用户协议
 		helper.GET("/protocols/user")
@@ -178,8 +181,8 @@ func (r *Router) Register() {
 	}
 
 	// v1 用户业务
+	user := erv1.Group("/users")
 	{
-		user := erv1.Group("/users")
 
 		// 获取用户信息
 		user.GET("/")
@@ -234,8 +237,8 @@ func (r *Router) Register() {
 	}
 
 	// v1 短视频业务
+	video := erv1.Group("/videos")
 	{
-		video := erv1.Group("/videos")
 
 		// 获取后台推送的视频
 		video.GET("/get")

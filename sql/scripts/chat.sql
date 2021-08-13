@@ -1,0 +1,16 @@
+CREATE TABLE IF NOT EXISTS `chat`
+(
+    `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+    `mid` VARCHAR(16) NOT NULL COMMENT '消息ID',
+    `type` TINYINT(1) SIGNED NOT NULL COMMENT '消息类型',
+    `from_uid` INT(11) UNSIGNED NOT NULL COMMENT '发送者的UID',
+    `to_uid` INT(11) UNSIGNED NOT NULL COMMENT '接收者的UID',
+    `group_id` VARCHAR(12) NOT NULL COMMENT '群聊的ID',
+    `message` VARCHAR(65535) NOT NULL COMMENT '文本消息',
+    `url`   VARCHAR(2083) NOT NULL COMMENT '文件网络链接',
+    `others` VARCHAR(65535) NOT NULL COMMENT '附加保留字段',
+    `datetime` DATETIME NOT NULL COMMENT '消息时间',
+    `version` CHAR(3) NOT NULL COMMENT '协议版本号',
+    PRIMARY KEY (`id`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4;

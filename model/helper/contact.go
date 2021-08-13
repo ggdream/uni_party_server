@@ -1,11 +1,11 @@
 package helper
 
 
-// HelperContactUsReqModel 联系我们：请求
-type HelperContactUsReqModel struct {}
+// ContactUsReqModel 联系我们：请求
+type ContactUsReqModel struct {}
 
-// HelperContactUsResModel 联系我们：响应
-type HelperContactUsResModel struct {
+// ContactUsResModel 联系我们：响应
+type ContactUsResModel struct {
 	Phone string `json:"phone"`
 	Email struct {
 		Feedback       string `json:"feedback"`

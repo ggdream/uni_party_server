@@ -1,13 +1,13 @@
 package event
 
 
-// EventArchiveCollectReqModel 收藏：请求
-type EventArchiveCollectReqModel struct {
+// ArchiveCollectReqModel 收藏：请求
+type ArchiveCollectReqModel struct {
 	Eid  string `json:"eid" form:"eid"`
 	Type int8   `json:"type" form:"type"`
 }
 
-// EventArchiveCollectResModel 收藏：响应
-type EventArchiveCollectResModel struct {
+// ArchiveCollectResModel 收藏：响应
+type ArchiveCollectResModel struct {
 	Status bool `json:"status" form:"status"`
 }
