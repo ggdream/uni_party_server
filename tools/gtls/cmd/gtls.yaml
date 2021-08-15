@@ -1,0 +1,17 @@
+crt: ca.crt
+key: ca.key
+children:
+    - name: event
+      keyType: 0    # 0 -> rsa, 1 -> ecdsa, 2 -> ed25519
+      organization: event.api.server.uparty
+      duration: 1y  # y -> year, d -> day
+      hosts:
+          - 127.0.0.1:443
+          - event.example.com
+    - name: video
+      keyType: 2    # 0 -> rsa, 1 -> ecdsa, 2 -> ed25519
+      organization: video.api.server.uparty
+      duration: 30d  # y -> year, d -> day
+      hosts:
+          - 127.0.0.1:8080
+          - video.example.com

@@ -28,6 +28,8 @@ const (
 	TypeEventPublishFailed // 消息发布失败
 	TypeEventUpdateFailed  // 消息更新失败
 
+	TypeVideoDeleteFailed // 视频删除失败
+
 	// 参数类
 	TypeParamsMissingErr // 参数缺失错误
 	TypeParamsParsingErr // 参数解析错误

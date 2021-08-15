@@ -1,10 +1,10 @@
 package video
 
 
-// VideoDeleteReqModel 删除视频：请求
-type VideoDeleteReqModel struct {
+// DeleteReqModel 删除视频：请求
+type DeleteReqModel struct {
 	Vid string `json:"vid"`
 }
 
-// VideoDeleteResModel 删除视频：响应
-type VideoDeleteResModel struct {}
+// DeleteResModel 删除视频：响应
+type DeleteResModel struct {}

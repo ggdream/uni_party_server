@@ -1,16 +1,13 @@
 package video
 
-
-// VideoSearchReqModel 搜索视频：请求
-type VideoSearchReqModel struct {
-	SortType int    `json:"sort_type"`
-	Query    string `json:"query"`
-	Offset   int    `json:"offset"`
-	Number   int    `json:"number"`
+// SearchReqModel 搜索视频：请求
+type SearchReqModel struct {
+	Keyword string   `json:"keyword" binding:"required"`
+	Tags    []string `json:"tags"`
 }
 
-// VideoSearchResModel 搜索视频：响应
-type VideoSearchResModel struct {
-	Captcha bool          `json:"captcha"`
-	Result  []videoResult `json:"result"`
+// SearchResModel 搜索视频：响应
+type SearchResModel struct {
+	Result []videoResult `json:"result"`
+	Count  int64         `json:"count"`
 }

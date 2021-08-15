@@ -14,5 +14,5 @@ func SearchController(c *gin.Context) {
 		return
 	}
 
-	// TODO: 从ElasticSearch里查询
+	// TODO: 去ElasticSearch里查询
 }

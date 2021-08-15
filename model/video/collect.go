@@ -1,19 +1,24 @@
 package video
 
-
-// VideoUserCollectionsReqModel 获取用户收藏的视频：请求
-type VideoUserCollectionsReqModel struct {
-	UID    int `json:"uid" form:"uid"`
-	Offset int `json:"offset" form:"offset"`
-	Number int `json:"number" form:"number"`
+// CollectReqModel 收藏视频：请求
+type CollectReqModel struct {
+	Vid string `json:"vid"`
 }
 
-// VideoUserCollectionsResModel 获取用户收藏的视频：响应
-type VideoUserCollectionsResModel struct {
+// CollectResModel 收藏视频：响应
+type CollectResModel struct{}
+
+// CollectGetReqModel 获取用户收藏的视频：请求
+type CollectGetReqModel struct {
+	Offset int64 `json:"offset" form:"offset"`
+	Number int64 `json:"number" form:"number"`
+}
+
+// CollectGetResModel 获取用户收藏的视频：响应
+type CollectGetResModel struct {
 	Total  string        `json:"total"`
 	Result []videoResult `json:"result"`
 }
-
 
 // userInfo 用户基本信息
 type userInfo struct {
