@@ -5,8 +5,8 @@ go 1.16
 require (
 	github.com/Shopify/sarama v1.29.1
 	github.com/ethereum/go-ethereum v1.10.7
-	github.com/gin-gonic/gin v1.7.2
-	github.com/go-redis/redis/v8 v8.11.1
+	github.com/gin-gonic/gin v1.7.4
+	github.com/go-redis/redis/v8 v8.11.3
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/olivere/elastic/v7 v7.0.27
