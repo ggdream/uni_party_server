@@ -1,7 +1,13 @@
 package router
 
 import (
-	chat2 "gateway/controller/chat"
+	"gateway/controller/auth"
+	"gateway/controller/chat"
+	"gateway/controller/event"
+	"gateway/controller/helper"
+	"gateway/controller/user"
+	"gateway/controller/video"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,241 +27,199 @@ func (r *Router) Register() {
 	externalRoutes := r.engine.Group("/x")
 	erv1 := externalRoutes.Group("/v1")
 
-	// v1 归档业务
-	archive := erv1.Group("/archive")
+	// v1 视频归档业务
+	archiveRouter := erv1.Group("/archive")
 	{
-
 		// 点赞
-		archive.POST("/star")				// 视频点赞表、视频点赞列表、视频表
-
-		// 添加评论
-		archive.POST("/reply/add")		// 视频祖宗评论表、视频子孙评论表
-
-		// 取消评论
-		archive.POST("/reply/del")		// 视频祖宗评论表、视频子孙评论表
+		archiveRouter.POST("/star")				// 视频点赞表、视频点赞列表、视频表
 
 		// 收藏
-		archive.POST("/collect")			// 视频收藏表
+		archiveRouter.POST("/collect")			// 视频收藏表
 
-		// 收集用户搜索行为
-		archive.POST("/behavior/search")
 
-		// 收集用户观看行为
-		archive.POST("/behavior/time")
+		// 添加评论
+		archiveRouter.POST("/reply/add")		// 视频祖宗评论表、视频子孙评论表
+
+		// 取消评论
+		archiveRouter.POST("/reply/del")		// 视频祖宗评论表、视频子孙评论表
+
+		// 获取评论
+		archiveRouter.POST("/reply/get")		// 视频祖宗评论表、视频子孙评论表
+
+		// 获取子评论
+		archiveRouter.POST("/reply/son")		// 视频祖宗评论表、视频子孙评论表
+
+		// // 我喜欢这个，多来点儿
+		// archiveRouter.POST("/love/yes", )
+
+		// // 我不喜欢这个，少来
+		// archiveRouter.POST("/love/no", )
+
+
+		// // 收集用户搜索行为
+		// archiveRouter.POST("/behavior/search")
+
+		// // 收集用户观看行为
+		// archiveRouter.POST("/behavior/time")
+
+
+		// 当前热点
+		archiveRouter.GET("/hot")
 	}
 
 	// v1 认证业务
-	auth := erv1.Group("/auth")
+	authRouter := erv1.Group("/auth")
 	{
-
 		// 密码登录
-		auth.POST("/login/cipher")		// 用户登录表
+		authRouter.POST("/login/cipher", auth.LoginByCipherController)		// 用户登录表
 
 		// 验证码登录
-		auth.POST("/login/code")			// 用户登录表[、用户地址表+用户信息表]
+		authRouter.POST("/login/code", auth.LoginByCodeController)			// 用户登录表[、用户地址表+用户信息表]
 
 		// 获取手机验证码
-		auth.GET("/login/code/phone")
+		authRouter.GET("/login/code/phone", auth.CodePhoneController)
 
 		// 获取邮箱验证码
-		auth.GET("/login/code/email")
+		authRouter.GET("/login/code/email", auth.CodeEMailController)
 
-		// 学生认证
-		auth.POST("/verify/student")
+		// 学生认证，移动端
+		authRouter.POST("/verify/student")
 
-		// 公司认证
-		auth.POST("/verify/company")
+		// 公司认证，网页端
+		authRouter.POST("/verify/company")
 
-		// 高校认证
-		auth.POST("/verify/university")
-
-		// 机构认证
-		auth.POST("/verify/institution")
-
-		// 环境审核
-		auth.GET("/safety/environment")
+		// 高校认证，网页端
+		authRouter.POST("/verify/university")
 	}
 
 	// v1 聊天业务
-	chat := erv1.Group("/chat")
+	chatRouter := erv1.Group("/chat")
 	{
-
 		// 建立WebSocket连接
-		chat.GET("/connect", chat2.ChatHandler)				// 聊天消息表(单聊) OR 聊天消息表(群聊)
+		chatRouter.GET("/connect", chat.ChatHandler)				// 聊天消息表(单聊) OR 聊天消息表(群聊)
 	}
 
 	// v1 消息业务
-	event := erv1.Group("/events")
+	eventRouter := erv1.Group("/event")
 	{
-
 		// 获取订阅消息
-		event.GET("/sub")						// 用户订阅列表
+		eventRouter.GET("/sub", event.SubscribeController)						// 用户订阅列表
 
 		// 删除消息
-		event.POST("/delete")					// 消息总表、用户订阅列表
+		eventRouter.POST("/delete", event.DeleteController)					// 消息总表、用户订阅列表
 
-		// 获取通知消息详情
-		event.GET("/notice/detail")			// 用户订阅列表、用户发布列表、用户发布内容、消息总表
+		// 获取消息详情
+		eventRouter.GET("/detail", event.DetailController)			// 用户订阅列表、用户发布列表、用户发布内容、消息总表
+
 
 		// 发布通知消息
-		event.POST("/notice/publish")			// 消息总表、用户发布列表
+		eventRouter.POST("/n/publish", event.NoticeCreateController)			// 消息总表、用户发布列表
 
 		// 修改通知消息
-		event.POST("/notice/repair")			// 消息总表、用户发布内容表
+		eventRouter.POST("/n/repair", event.NoticeUpdateController)			// 消息总表、用户发布内容表
 
-		// 获取投票详情
-		event.GET("/vote/detail")				// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
-		// 发布投票消息
-		event.POST("/vote/publish")			// 消息总表、用户发布列表
+		// 发布投票详情
+		eventRouter.GET("/v/publish", event.VoteCreateController)				// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 修改投票消息
-		event.POST("/vote/repair")			// 消息总表、用户发布内容表
+		eventRouter.POST("/v/repair", event.VoteUpdateController)			// 消息总表、用户发布列表
 
-		// 获取随机详情
-		event.GET("/sortition/detail")		// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 发布随机消息
-		event.POST("/sortition/publish")		// 消息总表、用户发布列表
+		eventRouter.POST("/s/publish", event.SortitionCreateController)		// 消息总表、用户发布列表
 
 		// 修改随机消息
-		event.POST("/sortition/repair")		// 消息总表、用户发布内容表
+		eventRouter.POST("/s/repair", event.SortitionUpdateController)		// 消息总表、用户发布内容表
 
-		// 获取报名详情
-		event.GET("/participation/detail")	// 用户订阅列表、用户发布列表、用户发布内容、消息总表
 
 		// 发布报名消息
-		event.POST("/participation/publish")	// 消息总表、用户发布列表
+		eventRouter.POST("/p/publish", event.ParticipationCreateController)	// 消息总表、用户发布列表
 
 		// 修改报名消息
-		event.POST("/participation/repair")	// 消息总表、用户发布内容表
+		eventRouter.POST("/p/repair", event.ParticipationUpdateController)	// 消息总表、用户发布内容表
+
 
 		// 搜索消息
-		event.GET("/search")					// 用户订阅列表、ES匹配
+		eventRouter.GET("/search", event.SearchController)					// 用户订阅列表、ES匹配
 
 		// 获取用户发布的消息
-		event.GET("/users/publications")
+		eventRouter.GET("/users/public", event.PublicationGetController)
 
-		// 获取用户收藏的消息
-		event.GET("/users/collections")
+		// 获取用户关注的消息
+		eventRouter.GET("/users/attend", event.AttendGetController)
+
 
 		// Get消息
-		event.POST("/archive/star")			// 确认消息
-
-		// Deprecated
-		// 给消息添加评论
-		event.POST("/archive/reply/add")
-
-		// Deprecated
-		// 给消息删除评论
-		event.POST("/archive/reply/del")
+		eventRouter.POST("/archive/get", event.ArchiveGetController)
 
 		// 关注消息
-		event.POST("/archive/collect")		// 用户的关注列表、消息的关注列表
+		eventRouter.POST("/archive/attend/add", event.ArchiveAddAttendController)
+
+		// 取关消息
+		eventRouter.POST("/archive/attend/del", event.ArchiveDelAttendController)
 	}
 
 	// v1 辅助业务
-	helper := erv1.Group("/helpers")
+	helperRouter := erv1.Group("/helper")
 	{
-
-		// 获取用户协议
-		helper.GET("/protocols/user")
-
-		// 获取服务协议
-		helper.GET("/protocols/service")
-
-		// 获取最新版本信息
-		helper.GET("/version")
-
-		// 获取所有版本信息
-		helper.GET("/versions")
-
-		// 关于我们
-		helper.GET("/about/us")
+		// 获取应用版本信息
+		helperRouter.GET("/app", helper.UpdateController)
 
 		// 联系我们
-		helper.GET("/contact")
+		helperRouter.GET("/contact", helper.ContactController)
 
 		// 用户反馈
-		helper.POST("/feedback")
+		helperRouter.POST("/feedback", helper.FeedbackController)
 	}
 
 	// v1 用户业务
-	user := erv1.Group("/users")
+	userRouter := erv1.Group("/user")
 	{
-
 		// 获取用户信息
-		user.GET("/")
+		userRouter.GET("/", user.GetProfileController)
 
 		// 获取用户的粉丝信息
-		user.GET("/followers")		// 关注表、用户信息表
+		userRouter.GET("/followers", user.FollowersController)		// 关注表、用户信息表
 
 		// 获取用户的关注信息
-		user.GET("/following")		// 关注表、用户信息表
+		userRouter.GET("/following", user.FollowingController)		// 关注表、用户信息表
 
 		// 关注某个用户
-		user.POST("/following/act")	// 关注表、用户信息表
+		userRouter.POST("/follow", user.FollowItController)	// 关注表、用户信息表
 
-		// 获取好友（双向关注）
-		user.GET("/friends")			// 关注表、用户信息表
-
-		// 获取用户发布的消息
-		user.GET("/events/publications")	// 用户的发布内容、消息总表
-
-		// 获取用户关注的消息
-		user.GET("/events/collections")	// 用户的关注列表、消息的关注列表
-
-		// 获取用户发布的视频
-		user.GET("/videos/publications")	// 用户发布视频缓存表、视频表
-
-		// 获取用户收藏的视频
-		user.GET("/videos/collections")	// 用户收藏视频缓存表、视频收藏表
+		// // 获取好友（双向关注）
+		// userRouter.GET("/friends")			// 关注表、用户信息表
 
 		// 搜索
-		user.GET("/search")				// 用户缓存表、用户信息表、ES模糊匹配
+		userRouter.GET("/search", user.SearchController)				// 用户缓存表、用户信息表、ES模糊匹配
 
 		// 更改用户头像
-		user.POST("/profile/avatar")		// 用户信息表、用户缓存表
+		userRouter.POST("/profile/avatar", user.UploadAvatarController)		// 用户信息表、用户缓存表
 
 		// 更改用户信息
-		user.POST("/profile/update")		// 用户信息表、用户缓存表
-
-		// 获取主题色
-		user.GET("/setttings/theme/get")		// 应用设置表
-
-		// 设置主题色
-		user.POST("/setttings/theme/set")		// 应用设置表
-
-		// 获取邮箱推送状态
-		user.GET("/setttings/push")			// 应用设置表
-
-		// 设置消息推送
-		user.POST("/setttings/push/event")	// 应用设置表
-
-		// 设置视频推送
-		user.POST("/setttings/push/video")	// 应用设置表
+		userRouter.POST("/profile/update", user.SetProfileController)		// 用户信息表、用户缓存表
 	}
 
 	// v1 短视频业务
-	video := erv1.Group("/videos")
+	videoRouter := erv1.Group("/video")
 	{
-
-		// 获取后台推送的视频
-		video.GET("/get")
+		// 获取推送的视频
+		videoRouter.GET("/get", video.PushController)
 
 		// 上传视频
-		video.POST("/upload")				// 视频上传待审核表
+		videoRouter.POST("/upload", video.UploadController)				// 视频上传待审核表
 
 		// 删除视频
-		video.POST("/delete")
+		videoRouter.POST("/delete", video.DeleteController)
 
 		// 搜索视频
-		video.GET("/search")
+		videoRouter.GET("/search", video.SearchController)
 
 		// 获取用户发布的视频
-		video.GET("/users/publications")
+		videoRouter.GET("/users/publish", video.PublishGetController)
 
 		// 获取用户收藏的视频
-		video.GET("/users/collections")
+		videoRouter.GET("/users/collect", video.CollectGetController)
 	}
 }

@@ -67,8 +67,8 @@ func UploadController(c *gin.Context) {
 	// TODO: 写入Kafka消息队列，等待审核
 }
 
-// UploadGetController 获取用户上传的视频
-func UploadGetController(c *gin.Context) {
+// PublishGetController 获取用户发布的视频
+func PublishGetController(c *gin.Context) {
 	var form video.UploadGetReqModel
 	if err := c.ShouldBind(&form); err != nil {
 		errno.Abort(c, errno.TypeParamsParsingErr)
