@@ -35,8 +35,11 @@ const (
 	TypeParamsParsingErr // 参数解析错误
 
 	// 安全类
-	TypeServerIsBusy // 服务器忙
-	TypeVisitTooFast // 访问过快
+	TypeServerIsBusy         // 服务器忙
+	TypeVisitTooFast         // 访问过快
+	TypeEncKeyGetFailed      // 获取加密秘钥失败
+	TypeCryptoInstanceFailed // 实例化加解密器失败
+	TypeDecryptFailed        // 解密失败
 
 	// 后台类
 	TypeCacheErr // Redis缓存出错
