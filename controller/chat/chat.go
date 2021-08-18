@@ -2,7 +2,7 @@ package chat
 
 import (
 	"fmt"
-	"gateway/cache"
+	"gateway/middleware"
 	"gateway/model/chat"
 	"net/http"
 
@@ -35,15 +35,7 @@ func ChatHandler(c *gin.Context) {
 		return
 	}
 
-	// Token效验，获取uid
-	tokenCache := &cache.AccessToken{
-		Token: queryModel.Token,
-	}
-	uid, err := tokenCache.Get()
-	if err != nil {
-		// TODO: 用户效验失败
-		return
-	}
+	uid := c.GetUint(middleware.KeyUID)
 
 	// 尝试协议转换，并获取WS套接字`conn`
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)

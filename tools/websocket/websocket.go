@@ -29,13 +29,13 @@ func New() *WebSocket {
 }
 
 // Join 用户登录
-func (w *WebSocket) Join(uid int, conn *websocket.Conn) {
-	w.conn.Set(strconv.Itoa(uid), conn)
+func (w *WebSocket) Join(uid uint, conn *websocket.Conn) {
+	w.conn.Set(strconv.Itoa(int(uid)), conn)
 }
 
 // Exit 用户退出
-func (w *WebSocket) Exit(uid int) {
-	w.conn.Del(strconv.Itoa(uid))
+func (w *WebSocket) Exit(uid uint) {
+	w.conn.Del(strconv.Itoa(int(uid)))
 }
 
 // Handle 对外处理函数

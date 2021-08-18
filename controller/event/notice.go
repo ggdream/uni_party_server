@@ -23,7 +23,7 @@ func NoticeCreateController(c *gin.Context)  {
 	// 将文件保存至七牛云
 	defer func() {
 		if err := recover(); err != nil {
-			errno.Abort(c, err)
+			errno.Abort(c, errno.TypeUnknownMistake)
 		}
 	}()
 
