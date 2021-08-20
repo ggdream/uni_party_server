@@ -6,6 +6,7 @@ import (
 	"gateway/model/event"
 	"gateway/mongo"
 	"gateway/tools/errno"
+
 	"github.com/gin-gonic/gin"
 )
 

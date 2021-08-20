@@ -7,6 +7,4 @@ type ArchiveGetReqModel struct {
 }
 
 // ArchiveGetResModel 已读：响应
-type ArchiveGetResModel struct {
-	Status bool `json:"status" form:"status"`
-}
+type ArchiveGetResModel struct {}

@@ -1,11 +1,5 @@
 package event
 
-// VoteDetailReqModel 获取投票消息详情：请求
-type VoteDetailReqModel struct {
-	Type int8   `json:"type" form:"type"`
-	EID  string `json:"eid" form:"eid"`
-}
-
 // VoteDetailResModel 获取投票消息详情：响应
 type VoteDetailResModel struct {
 	// 消息的基本元信息
