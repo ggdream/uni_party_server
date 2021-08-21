@@ -1,6 +1,8 @@
 package event
 
 import (
+	"gateway/cache"
+	"gateway/middleware"
 	"gateway/model/event"
 	"gateway/mongo"
 	"gateway/tools/errno"
@@ -67,4 +69,42 @@ func SortitionUpdateController(c *gin.Context) {
 
 	// 返回结果
 	errno.Perfect(c, updateDocument)
+}
+
+// SortitionJoinController 申请 || 取消 参加随机
+func SortitionJoinController(c *gin.Context) {
+	var form event.SortitionJoinReqModel
+	if err := c.ShouldBind(&form); err != nil {
+		errno.Abort(c, errno.TypeParamsParsingErr)
+		return
+	}
+
+	// TODO: 查询该消息的具体元数据，是否允许撤销、截止日期，最多人数
+
+	uid := c.GetUint(middleware.KeyUID)
+	ca := cache.Event{}
+
+	var err error
+	var res int64
+	if form.Type == 0 {
+		// 参加
+		res, err = ca.JoinSortition(uid, form.EID)
+	} else if form.Type == 1 {
+		// 取消
+		res, err = ca.UnJoinSortition(uid, form.EID)
+	} else {
+		errno.Abort(c, errno.TypeParamsParsingErr)
+		return
+	}
+
+	if err != nil {
+		errno.Abort(c, errno.TypeCacheErr)
+		return
+	}
+	if res == 0 {
+		errno.New(c, errno.TypeEventErr, nil, "你已参加或取消该活动")
+		return
+	}
+
+	errno.Perfect(c, nil)
 }

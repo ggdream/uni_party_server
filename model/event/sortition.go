@@ -52,3 +52,12 @@ type SortitionUpdateResModel struct {
 	Frequency int    `json:"frequency" form:"frequency"`
 	EID       string `json:"eid" form:"eid"`
 }
+
+// SortitionJoinReqModel 申请参加随机：请求
+type SortitionJoinReqModel struct {
+	EID  string `json:"eid" form:"eid"`
+	Type int    `json:"type" form:"type"`
+}
+
+// SortitionJoinResModel 申请参加随机：响应
+type SortitionJoinResModel struct{}

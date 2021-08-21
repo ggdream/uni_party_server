@@ -31,7 +31,7 @@ func GetProfileController(c *gin.Context) {
 		Motto:        db.Motto,
 		Rank:         0,
 		SubRank:      0,
-		Type:         db.UserType,
+		Type:         db.Type,
 		Org:          "四川师范大学",
 		Followers:    0,
 		Following:    0,
@@ -60,8 +60,8 @@ func SetProfileController(c *gin.Context) {
 	db := sql.UserInfoTable{
 		Username: form.Username,
 		Birthday: birthday,
-		Sex: form.Sex,
-		Motto: form.Motto,
+		Sex:      form.Sex,
+		Motto:    form.Motto,
 	}
 	if err := db.Update(); err != nil {
 		errno.Abort(c, errno.TypeMySQLErr)

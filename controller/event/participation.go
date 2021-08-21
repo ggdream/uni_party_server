@@ -1,6 +1,8 @@
 package event
 
 import (
+	"gateway/cache"
+	"gateway/middleware"
 	"gateway/model/event"
 	"gateway/mongo"
 	"gateway/tools/errno"
@@ -8,9 +10,8 @@ import (
 	"time"
 )
 
-
 // ParticipationCreateController 发布报名类消息
-func ParticipationCreateController(c *gin.Context)  {
+func ParticipationCreateController(c *gin.Context) {
 	var form event.ParticipationCreateReqModel
 	if err := c.ShouldBind(&form); err != nil {
 		errno.Abort(c, errno.TypeParamsParsingErr)
@@ -19,7 +20,7 @@ func ParticipationCreateController(c *gin.Context)  {
 
 	// 	消息发布至MongoDB，得到eid
 	document := mongo.EventDocument{
-		UID:      c.GetUint("uid"),
+		UID:      c.GetUint(middleware.KeyUID),
 		Type:     TypeParticipation,
 		Title:    form.Title,
 		Content:  form.Content,
@@ -41,7 +42,7 @@ func ParticipationCreateController(c *gin.Context)  {
 }
 
 // ParticipationUpdateController 修改报名类消息
-func ParticipationUpdateController(c *gin.Context)  {
+func ParticipationUpdateController(c *gin.Context) {
 	var form event.ParticipationUpdateReqModel
 	if err := c.ShouldBind(&form); err != nil {
 		errno.Abort(c, errno.TypeParamsParsingErr)
@@ -68,4 +69,37 @@ func ParticipationUpdateController(c *gin.Context)  {
 
 	// 返回结果
 	errno.Perfect(c, updateDocument)
+}
+
+// ParticipationJoinController 申请 || 取消 参加活动
+func ParticipationJoinController(c *gin.Context) {
+	var form event.ParticipationJoinReqModel
+	if err := c.ShouldBind(&form); err != nil {
+		errno.Abort(c, errno.TypeParamsParsingErr)
+		return
+	}
+
+	// TODO: 查询该消息的具体元数据，是否允许撤销、截止日期，最多人数
+
+	uid := c.GetUint(middleware.KeyUID)
+	ca := cache.Event{}
+
+	var err error
+	if form.Type == 0 {
+		// 参加
+		err = ca.JoinParticipation(uid, form.EID, 50)
+	} else if form.Type == 1 {
+		// 取消
+		err = ca.UnJoinParticipation(uid, form.EID)
+	} else {
+		errno.Abort(c, errno.TypeParamsParsingErr)
+		return
+	}
+
+	if err != nil {
+		errno.Abort(c, errno.TypeCacheErr)
+		return
+	}
+
+	errno.Perfect(c, nil)
 }

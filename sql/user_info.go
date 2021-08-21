@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"gateway/model/user"
 	"gorm.io/gorm"
 	"time"
 )
@@ -10,13 +11,14 @@ type UserInfoTable struct {
 	gorm.Model
 	IdentifyType uint8
 	IdentifyNo   string
+	Type         int8
+	OrgName      string
 	Telephone    string
 	EMail        string
 	Motto        string
 	Birthday     time.Time
 	Sex          string
 	Avatar       string
-	UserType     uint8
 	Username     string
 	Password     string
 	Salt         string
@@ -65,4 +67,10 @@ func (u *UserInfoTable) QueryUserByPhone(telephone string) error {
 // QueryUserByEMail 通过邮箱查找用户
 func (u *UserInfoTable) QueryUserByEMail(email string) error {
 	return db.Where("email = ?", email).Find(u).Error
+}
+
+// QueryInByUIDs 使用uid批量查询用户的信息
+func (u *UserInfoTable) QueryInByUIDs(uidList []string) (data []user.UserInfo, err error) {
+	err = db.Model(u).Where("id = ?", uidList).Find(&data).Error
+	return
 }

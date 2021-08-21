@@ -33,6 +33,7 @@ var errorsMap = map[Type]string{
 
 	TypeParamsMissingErr: "参数缺失错误",
 	TypeParamsParsingErr: "参数解析错误",
+	TypeParamsInvalidErr: "参数无效错误",
 
 	TypeServerIsBusy:         "服务器忙",
 	TypeVisitTooFast:         "访问过快",
@@ -43,4 +44,10 @@ var errorsMap = map[Type]string{
 	TypeCacheErr: "服务器有点忙",
 	TypeMongoErr: "服务器有点忙",
 	TypeMySQLErr: "服务器有点忙",
+
+	TypeEventErr:              "消息类错误",
+	TypeEventTypeErr:          "消息类型错误",
+	TypeEventDeadlineErr:      "已超过截止时间",
+	TypeEventOptionsNumberErr: "用户投票选项数量超过限值",
+	TypeEventVoteAOErr:        "",
 }

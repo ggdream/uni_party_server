@@ -33,6 +33,16 @@ func (f Follow) CountFollowers(uid uint) (int64, error) {
 	return client.LLen(f.joinUserFollowersKey(uid))
 }
 
+// GetFollowing 获取用户的关注者信息
+func (f Follow) GetFollowing(uid uint, offset, number int64) ([]redis.Z, error) {
+	return client.ZRevRangeWithScores(f.joinUserFollowingKey(uid), offset, offset+number-1)
+}
+
+// GetFollowers 获取用户的粉丝信息
+func (f Follow) GetFollowers(uid uint, offset, number int64) ([]string, error) {
+	return client.LRange(f.joinUserFollowersKey(uid), offset, offset+number-1)
+}
+
 // Follow 关注他人
 func (f Follow) Follow(fromUID, toUID uint) error {
 	el := &redis.Z{
@@ -55,8 +65,12 @@ func (f Follow) Follow(fromUID, toUID uint) error {
 // UnFollow 取关他人
 func (f Follow) UnFollow(fromUID, toUID uint) error {
 	// 从自己的关注集合移除对方
-	if err := client.ZRem(f.joinUserFollowingKey(fromUID), toUID); err != nil {
+	v, err := client.ZRem(f.joinUserFollowingKey(fromUID), toUID)
+	if err != nil {
 		return err
+	}
+	if v == 0 {
+		return DelItAlreadyErr
 	}
 
 	// 从对方的粉丝列表移除自己

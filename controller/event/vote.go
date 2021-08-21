@@ -1,6 +1,7 @@
 package event
 
 import (
+	"gateway/middleware"
 	"gateway/model/event"
 	"gateway/mongo"
 	"gateway/tools/errno"
@@ -25,9 +26,9 @@ func VoteCreateController(c *gin.Context) {
 		Tags:     form.Tags,
 		Datetime: time.Now(),
 		Constraint: mongo.VoteField{
-			AllowedNumber: form.AllowedNumber,
-			Deadline:      form.Deadline,
-			Options:       form.Options,
+			MaxNumber: form.AllowedNumber,
+			Deadline:  form.Deadline,
+			Options:   form.Options,
 		},
 	}
 	if err := document.Insert(); err != nil {
@@ -54,9 +55,9 @@ func VoteUpdateController(c *gin.Context) {
 		Content: form.Content,
 		Tags:    form.Tags,
 		Constraint: mongo.VoteField{
-			AllowedNumber: form.AllowedNumber,
-			Deadline:      form.Deadline,
-			Options:       form.Options,
+			MaxNumber: form.AllowedNumber,
+			Deadline:  form.Deadline,
+			Options:   form.Options,
 		},
 	}
 	_, err := document.Update(form.EID, &updateDocument)
@@ -67,4 +68,86 @@ func VoteUpdateController(c *gin.Context) {
 
 	// 返回结果
 	errno.Perfect(c, updateDocument)
+}
+
+// VoteDoController 进行投票
+func VoteDoController(c *gin.Context) {
+	var form event.VoteDoReqModel
+	if err := c.ShouldBind(&form); err != nil {
+		errno.Abort(c, errno.TypeParamsParsingErr)
+		return
+	}
+
+	// 查询该消息的细节信息
+	e := mongo.EventDocument{}
+	eventDocument, err := e.FindOneDetail(form.EID)
+	if err != nil {
+		errno.Abort(c, errno.TypeMongoErr)
+		return
+	}
+	// 是否为投票消息
+	if eventDocument.Type != TypeVote {
+		errno.Abort(c, errno.TypeEventTypeErr)
+		return
+	}
+
+	constraint := eventDocument.Constraint.(mongo.VoteField)
+	// 答案个数与选项个数不符
+	if len(constraint.Options) != len(form.Answers) {
+		errno.Abort(c, errno.TypeEventVoteAOErr)
+		return
+	}
+	// 是否超过截至时间
+	if constraint.Deadline < time.Now().Unix() {
+		errno.Abort(c, errno.TypeEventDeadlineErr)
+		return
+	}
+	if constraint.MaxNumber < 0 {
+		errno.Abort(c, errno.TypeParamsInvalidErr)
+		return
+	}
+
+	var answerTrue int
+	for _, answer := range form.Answers {
+		if answer {
+			answerTrue++
+		}
+	}
+	// 投票选项数量超过限制
+	if answerTrue > constraint.MaxNumber {
+		errno.Abort(c, errno.TypeEventTypeErr)
+		return
+	}
+
+	db := mongo.VoteDocument{
+		UID:      c.GetUint(middleware.KeyUID),
+		EID:      form.EID,
+		Answers:  form.Answers,
+		Datetime: time.Now(),
+	}
+	if err := db.Insert(); err != nil {
+		errno.Abort(c, errno.TypeMongoErr)
+		return
+	}
+
+	data, err := db.Query(form.EID, 0, 0)
+	if err != nil {
+		errno.Abort(c, errno.TypeMongoErr)
+		return
+	}
+
+	result := make([]int64, len(form.Answers))
+	for _, v := range data {
+		for i, answer := range v.Answers {
+			if answer {
+				result[i] += 1
+			}
+		}
+	}
+
+	ret := &event.VoteDoResModel{
+		Total:   len(data),
+		Answers: result,
+	}
+	errno.Perfect(c, ret)
 }

@@ -150,10 +150,17 @@ func (r *Redis) HExists(key, field string) (bool, error) {
 }
 
 // SAdd 给set添加成员
-func (r *Redis) SAdd(key string, members ...interface{}) error {
+func (r *Redis) SAdd(key string, members ...interface{}) *redis.IntCmd {
 	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
 	defer cancelFunc()
-	return r.client.SAdd(ctx, key, members...).Err()
+	return r.client.SAdd(ctx, key, members...)
+}
+
+// SRem 移除set里的成员
+func (r *Redis) SRem(key string, members ...interface{}) *redis.IntCmd {
+	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
+	defer cancelFunc()
+	return r.client.SRem(ctx, key, members...)
 }
 
 // SIsMember 判断该member是否为此set的一员
@@ -185,10 +192,10 @@ func (r *Redis) ZAddXX(key string, members ...*redis.Z) (int64, error) {
 }
 
 // ZRem ZRem指令
-func (r *Redis) ZRem(key string, members ...interface{}) error {
+func (r *Redis) ZRem(key string, members ...interface{}) (int64, error) {
 	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
 	defer cancelFunc()
-	return r.client.ZRem(ctx, key, members...).Err()
+	return r.client.ZRem(ctx, key, members...).Result()
 }
 
 // ZCard ZCard指令

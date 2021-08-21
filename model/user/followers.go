@@ -1,15 +1,14 @@
 package user
 
-
-// UserFollowersGetReqModel 获取用户的粉丝信息：请求
-type UserFollowersGetReqModel struct {
+// FollowersGetReqModel 获取用户的粉丝信息：请求
+type FollowersGetReqModel struct {
 	UID    string `json:"uid" form:"uid"`
-	Offset string `json:"offset" form:"offset"`
-	Number string `json:"number" form:"number"`
+	Offset int64  `json:"offset" form:"offset"`
+	Number int64  `json:"number" form:"number"`
 }
 
-// UserFollowersGetResModel 获取用户的粉丝信息：响应
-type UserFollowersGetResModel struct {
-	Total int        `json:"total" form:"total"`
-	Users []userInfo `json:"users" form:"users"`
+// FollowersGetResModel 获取用户的粉丝信息：响应
+type FollowersGetResModel struct {
+	Total int64      `json:"total" form:"total"`
+	Users []UserInfo `json:"users" form:"users"`
 }

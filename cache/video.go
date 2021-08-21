@@ -50,11 +50,5 @@ func (v Video) CountCollect(uid uint) (int64, error) {
 
 // GetCollect 分页获取用户收藏视频
 func (v Video) GetCollect(uid uint, offset, number int64) ([]string, error) {
-	if offset < 0 || number < 0 {
-		return nil, MustGEZeroErr
-	}
-	if number != 0 {
-		number--
-	}
-	return client.LRange(v.joinUserCollectKey(uid), offset, number)
+	return client.LRange(v.joinUserCollectKey(uid), offset, offset+number-1)
 }

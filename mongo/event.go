@@ -57,9 +57,10 @@ type NoticeField struct {
 
 // VoteField 投票消息字段
 type VoteField struct {
-	AllowedNumber int      `json:"allowed_number"`
-	Deadline      int64    `json:"deadline"`
-	Options       []string `json:"options"`
+	// 最多的投票量
+	MaxNumber int      `json:"max_number"`
+	Deadline  int64    `json:"deadline"`
+	Options   []string `json:"options"`
 }
 
 // SortitionField 随机消息字段

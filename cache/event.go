@@ -30,7 +30,7 @@ func (e Event) joinCountAttendKey(eid string) string {
 // joinCountWatchKey 获取查看消息计数的哈希的string-key
 func (e Event) joinCountWatchKey(eid string) string {
 	eventIntID, _ := eventHash.Decode(eid)
-	return fmt.Sprintf("event:count:watch:%d", eventIntID / 4096)
+	return fmt.Sprintf("event:count:watch:%d", eventIntID/4096)
 }
 
 // joinUserGetKey 获取用户Get的消息集合的string-key
@@ -53,6 +53,15 @@ func (e Event) joinUserSubKey(uid uint) string {
 	return fmt.Sprintf("event:user:sub:%d", uid)
 }
 
+// joinSortJoinKey 获取参加随机集合的string-key
+func (e Event) joinSortJoinKey(eid string) string {
+	return fmt.Sprintf("event:sort:join:%s", eid)
+}
+
+// joinPartJoinKey 获取参加报名列表的string-key
+func (e Event) joinPartJoinKey(eid string) string {
+	return fmt.Sprintf("event:part:join:%s", eid)
+}
 
 // EventCountGet 获取消息的Get数量
 func (e Event) EventCountGet(eid string) (int64, error) {
@@ -108,14 +117,13 @@ func (e Event) Delete(publisher uint, eid string, subscribers ...uint) error {
 
 // QueryPub 分页查询发布消息
 func (e Event) QueryPub(uid uint, offset, number int64) ([]string, error) {
-	return client.LRange(e.joinUserPubKey(uid), offset, number - 1)
+	return client.LRange(e.joinUserPubKey(uid), offset, number-1)
 }
 
 // QuerySub 分页查询订阅消息
 func (e Event) QuerySub(uid uint, offset, number int64) ([]string, error) {
-	return client.LRange(e.joinUserSubKey(uid), offset, number - 1)
+	return client.LRange(e.joinUserSubKey(uid), offset, number-1)
 }
-
 
 // DoGet 用户Get消息
 func (e Event) DoGet(uid uint, eid string) error {
@@ -132,8 +140,32 @@ func (e Event) DoGet(uid uint, eid string) error {
 		return AddItAlreadyErr
 	}
 
-	el.Member = eid	// 为了复用结构体实例
+	el.Member = eid // 为了复用结构体实例
 	return client.ZAdd(e.joinUserGetKey(uid), el)
+}
+
+// JoinSortition 参加随机
+func (e Event) JoinSortition(uid uint, eid string) (int64, error) {
+	return client.SAdd(e.joinSortJoinKey(eid), uid).Result()
+}
+
+// UnJoinSortition 取消随机
+func (e Event) UnJoinSortition(uid uint, eid string) (int64, error) {
+	return client.SAdd(e.joinSortJoinKey(eid), uid).Result()
+}
+
+// JoinParticipation 参加报名
+func (e Event) JoinParticipation(uid uint, eid string, maxSize int) error {
+	// TODO: 查看是否已满
+	// TODO: 满则返回，不满则添加
+	return nil
+}
+
+// UnJoinParticipation 取消报名
+func (e Event) UnJoinParticipation(uid uint, eid string) error {
+	// TODO: 查看是否已满
+	// TODO: 满则返回，不满则添加
+	return nil
 }
 
 // DoAttend 用户关注消息
@@ -151,27 +183,22 @@ func (e Event) DoAttend(uid uint, eid string) error {
 		return AddItAlreadyErr
 	}
 
-	el.Member = eid	// 为了复用结构体实例
+	el.Member = eid // 为了复用结构体实例
 	return client.ZAdd(e.joinUserAttendKey(uid), el)
 }
 
 // DoUnAttend 用户取关消息
 func (e Event) DoUnAttend(uid uint, eid string) error {
-	if err := client.ZRem(e.joinCountAttendKey(eid), uid); err != nil {
+	if _, err := client.ZRem(e.joinCountAttendKey(eid), uid); err != nil {
 		return err
 	}
-	return client.ZRem(e.joinUserAttendKey(uid), eid)
+	_, err := client.ZRem(e.joinUserAttendKey(uid), eid)
+	return err
 }
 
 // GetAttend 获取用户关注的消息
 func (e Event) GetAttend(uid uint, offset, number int64) ([]string, error) {
-	if offset < 0 || number < 0 {
-		return nil, MustGEZeroErr
-	}
-	if number != 0 {
-		number--
-	}
-	return client.ZRevRange(e.joinUserAttendKey(uid), offset, number)
+	return client.ZRevRange(e.joinUserAttendKey(uid), offset, offset+number-1)
 }
 
 // GetPublish 获取用户发布的消息
@@ -182,5 +209,5 @@ func (e Event) GetPublish(uid uint, offset, number int64) ([]string, error) {
 	if number != 0 {
 		number--
 	}
-	return client.ZRevRange(e.joinUserPubKey(uid), offset, number)
+	return client.ZRevRange(e.joinUserPubKey(uid), offset, offset+number-1)
 }

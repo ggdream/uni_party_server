@@ -33,8 +33,8 @@ type VoteCreateReqModel struct {
 
 // VoteCreateResModel 发布投票消息：响应
 type VoteCreateResModel struct {
-	Type int8   `json:"type" form:"type"`
-	EID  string `json:"eid" form:"eid"`
+	Type int8   `json:"type"`
+	EID  string `json:"eid"`
 }
 
 // VoteUpdateReqModel 修改投票消息：请求
@@ -50,6 +50,19 @@ type VoteUpdateReqModel struct {
 
 // VoteUpdateResModel 修改投票消息：响应
 type VoteUpdateResModel struct {
-	Frequency int    `json:"frequency" form:"frequency"`
-	EID       string `json:"eid" form:"eid"`
+	Frequency int    `json:"frequency"`
+	EID       string `json:"eid"`
+}
+
+// VoteDoReqModel 执行投票：请求
+type VoteDoReqModel struct {
+	EID     string `json:"eid" form:"eid"`
+	Answers []bool `json:"answers" form:"answers"`
+}
+
+// VoteDoResModel 执行投票：响应
+type VoteDoResModel struct {
+	Total   int      `json:"total"`
+	Options []string `json:"options"`
+	Answers []int64  `json:"answers"`
 }

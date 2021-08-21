@@ -17,7 +17,7 @@ type ProfileGetResModel struct {
 	Motto        string `json:"motto"`
 	Rank         uint8  `json:"rank"`
 	SubRank      uint8  `json:"sub_rank"`
-	Type         uint8  `json:"type"`
+	Type         int8   `json:"type"`
 	Org          string `json:"org"`
 	Followers    int    `json:"followers"`
 	Following    int    `json:"following"`
