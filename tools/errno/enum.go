@@ -52,6 +52,10 @@ const (
 	TypeEventDeadlineErr      // 已到期限错误
 	TypeEventOptionsNumberErr // 用户投票选项数量超过限值
 	TypeEventVoteAOErr        // 答案个数与选项个数不符
+	TypeEventCannotCancelErr  // 不能取消
+	TypeEventQuotaFullErr     // 名额已满
+
+	TypeESErr // ElasticSearch出错
 )
 
 type Type int16

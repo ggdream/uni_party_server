@@ -72,9 +72,9 @@ type SortitionField struct {
 
 // ParticipationField 报名消息字段
 type ParticipationField struct {
-	RequiredNumber int    `json:"required_number"`
-	AllowedCancel  bool   `json:"allowed_cancel"`
-	Deadline       string `json:"deadline"`
+	RequiredNumber int   `json:"required_number"`
+	AllowedCancel  bool  `json:"allowed_cancel"`
+	Deadline       int64 `json:"deadline"`
 }
 
 // Insert 插入消息

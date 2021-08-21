@@ -79,15 +79,38 @@ func ParticipationJoinController(c *gin.Context) {
 		return
 	}
 
-	// TODO: 查询该消息的具体元数据，是否允许撤销、截止日期，最多人数
+	// 查询该消息的细节信息
+	e := mongo.EventDocument{}
+	eventDocument, err := e.FindOneDetail(form.EID)
+	if err != nil {
+		errno.Abort(c, errno.TypeMongoErr)
+		return
+	}
+	// 是否为报名消息
+	if eventDocument.Type != TypeParticipation {
+		errno.Abort(c, errno.TypeEventTypeErr)
+		return
+	}
+
+	constraint := eventDocument.Constraint.(mongo.ParticipationField)
+	// 是否超过截至时间
+	if constraint.Deadline < time.Now().Unix() {
+		errno.Abort(c, errno.TypeEventDeadlineErr)
+		return
+	}
 
 	uid := c.GetUint(middleware.KeyUID)
 	ca := cache.Event{}
 
-	var err error
 	if form.Type == 0 {
 		// 参加
-		err = ca.JoinParticipation(uid, form.EID, 50)
+		var ok int
+		ok, err = ca.JoinParticipation(uid, form.EID, 50)
+		if ok == 0 {
+			// 已满
+			errno.Abort(c, errno.TypeEventQuotaFullErr)
+			return
+		}
 	} else if form.Type == 1 {
 		// 取消
 		err = ca.UnJoinParticipation(uid, form.EID)

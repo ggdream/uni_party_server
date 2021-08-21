@@ -20,7 +20,7 @@ func SortitionCreateController(c *gin.Context) {
 
 	// 	消息发布至MongoDB，得到eid
 	document := mongo.EventDocument{
-		UID:      c.GetUint("uid"),
+		UID:      c.GetUint(middleware.KeyUID),
 		Type:     TypeSortition,
 		Title:    form.Title,
 		Content:  form.Content,
@@ -79,18 +79,40 @@ func SortitionJoinController(c *gin.Context) {
 		return
 	}
 
-	// TODO: 查询该消息的具体元数据，是否允许撤销、截止日期，最多人数
+	// 查询该消息的细节信息
+	e := mongo.EventDocument{}
+	eventDocument, err := e.FindOneDetail(form.EID)
+	if err != nil {
+		errno.Abort(c, errno.TypeMongoErr)
+		return
+	}
+	// 是否为投票消息
+	if eventDocument.Type != TypeSortition {
+		errno.Abort(c, errno.TypeEventTypeErr)
+		return
+	}
+
+	constraint := eventDocument.Constraint.(mongo.SortitionField)
+	// 是否超过截至时间
+	if constraint.Deadline < time.Now().Unix() {
+		errno.Abort(c, errno.TypeEventDeadlineErr)
+		return
+	}
 
 	uid := c.GetUint(middleware.KeyUID)
 	ca := cache.Event{}
 
-	var err error
 	var res int64
 	if form.Type == 0 {
 		// 参加
 		res, err = ca.JoinSortition(uid, form.EID)
 	} else if form.Type == 1 {
 		// 取消
+		// 是否允许取消
+		if !constraint.AllowedCancel {
+			errno.Abort(c, errno.TypeEventCannotCancelErr)
+			return
+		}
 		res, err = ca.UnJoinSortition(uid, form.EID)
 	} else {
 		errno.Abort(c, errno.TypeParamsParsingErr)

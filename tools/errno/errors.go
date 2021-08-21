@@ -49,5 +49,8 @@ var errorsMap = map[Type]string{
 	TypeEventTypeErr:          "消息类型错误",
 	TypeEventDeadlineErr:      "已超过截止时间",
 	TypeEventOptionsNumberErr: "用户投票选项数量超过限值",
-	TypeEventVoteAOErr:        "",
+	TypeEventVoteAOErr:        "答案个数与选项个数不符",
+	TypeEventCannotCancelErr:  "不允许取消报名",
+
+	TypeESErr: "服务器有些忙",
 }

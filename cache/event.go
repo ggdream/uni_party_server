@@ -1,6 +1,8 @@
 package cache
 
 import (
+	"context"
+	_ "embed"
 	"fmt"
 	"gateway/tools/hashids"
 	"github.com/go-redis/redis/v8"
@@ -10,6 +12,9 @@ import (
 var (
 	eventHash = hashids.New("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890", "abcd", 8)
 )
+
+//go:embed scripts/part_join.lua
+var partJoinLuaScript string
 
 // Event 事务消息
 // 消息统计：Get使用 Sorted Sets；Attend使用 Sorted Sets；Watch使用 Hash
@@ -155,17 +160,17 @@ func (e Event) UnJoinSortition(uid uint, eid string) (int64, error) {
 }
 
 // JoinParticipation 参加报名
-func (e Event) JoinParticipation(uid uint, eid string, maxSize int) error {
-	// TODO: 查看是否已满
-	// TODO: 满则返回，不满则添加
-	return nil
+func (e Event) JoinParticipation(uid uint, eid string, maxSize int) (int, error) {
+	script := redis.NewScript(partJoinLuaScript)
+
+	ctx, cancel := context.WithTimeout(client.context, client.timeout)
+	defer cancel()
+	return script.Run(ctx, client.client, []string{e.joinPartJoinKey(eid)}, maxSize, uid).Int()
 }
 
 // UnJoinParticipation 取消报名
 func (e Event) UnJoinParticipation(uid uint, eid string) error {
-	// TODO: 查看是否已满
-	// TODO: 满则返回，不满则添加
-	return nil
+	return client.LRem(e.joinPartJoinKey(eid), 0, uid)
 }
 
 // DoAttend 用户关注消息

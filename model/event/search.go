@@ -1,16 +1,24 @@
 package event
 
-
 // SearchReqModel 搜索消息：请求
 type SearchReqModel struct {
-	Type      int8   `json:"type" form:"type"`
-	StartTime string `json:"start_time" form:"start_time"`
-	EndTime   string `json:"end_time" form:"end_time"`
-	Query     string `json:"query" form:"query"`
+	//Type  int8   `json:"type" form:"type"`
+	Query string `json:"query" form:"query"`
+
+	Offset int `json:"offset" form:"offset"`
+	Number int `json:"number" form:"number"`
 }
 
 // SearchResModel 搜索消息：响应
 type SearchResModel struct {
-	Total string        `json:"total" form:"total"`
-	Match []eventResult `json:"match" form:"match"`
+	Total int                `json:"total"`
+	Match []EventResultModel `json:"match"`
+}
+
+type EventResultModel struct {
+	UID        uint   `json:"uid"`
+	EID        string `json:"eid"`
+	Title      string `json:"title" `
+	Type       int8   `json:"type"`
+	CreateTime int64  `json:"create_time"`
 }

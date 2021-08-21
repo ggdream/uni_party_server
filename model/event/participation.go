@@ -26,7 +26,7 @@ type ParticipationCreateReqModel struct {
 	Tags           []string `json:"tags" form:"tags"`
 	RequiredNumber int      `json:"required_number" form:"required_number"`
 	AllowedCancel  bool     `json:"allowed_cancel" form:"allowed_cancel"`
-	Deadline       string   `json:"deadline" form:"deadline"`
+	Deadline       int64    `json:"deadline" form:"deadline"`
 }
 
 // ParticipationCreateResModel 发布报名消息：响应
@@ -43,7 +43,7 @@ type ParticipationUpdateReqModel struct {
 	Tags           []string `json:"tags" form:"tags"`
 	RequiredNumber int      `json:"required_number" form:"required_number"`
 	AllowedCancel  bool     `json:"allowed_cancel" form:"allowed_cancel"`
-	Deadline       string   `json:"deadline" form:"deadline"`
+	Deadline       int64    `json:"deadline" form:"deadline"`
 }
 
 // ParticipationUpdateResModel 修改报名消息：响应

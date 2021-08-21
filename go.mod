@@ -17,6 +17,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.12
+	github.com/olivere/elastic/v7 v7.0.27
 )
 
 require (

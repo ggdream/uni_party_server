@@ -89,3 +89,17 @@ func (m *MongoDB) FindOne(collection string, filter interface{}, opts ...*option
 	defer cancel()
 	return m.client.Database(m.database).Collection(collection).FindOne(ctx, filter, opts...)
 }
+
+// Count 统计记录数
+func (m *MongoDB) Count(collection string, filter interface{}, opts ...*options.CountOptions) (int64, error) {
+	ctx, cancel := context.WithTimeout(m.context, m.timeout*2)
+	defer cancel()
+	return m.client.Database(m.database).Collection(collection).CountDocuments(ctx, filter, opts...)
+}
+
+
+
+
+
+
+
