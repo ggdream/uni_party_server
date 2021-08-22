@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"errors"
+	"gateway/mongo"
 	"strconv"
 	"time"
 
@@ -55,7 +56,21 @@ func (w *WebSocket) handle(wrapper *Wrapper) error {
 	datetime := int(time.Now().UnixNano())
 	wrapper.Modify(datetime, "xxxx")
 
-	// TODO: 聊天记录持久化
+	document := mongo.ChatDocument{
+		Type:     wrapper.Type,
+		FromUID:  wrapper.FromUID,
+		ToUID:    wrapper.ToUID,
+		GroupID:  wrapper.GroupID,
+		Message:  wrapper.Message,
+		URL:      wrapper.URL,
+		Others:   wrapper.Others,
+		MID:      wrapper.MID,
+		Datetime: wrapper.Datetime,
+		Version:  wrapper.Version,
+	}
+	if err := document.Insert(); err != nil {
+		return errors.New("insert mongo failed")
+	}
 
 	toUID := strconv.Itoa(wrapper.ToUID)
 	// 获取WebSocket套接字

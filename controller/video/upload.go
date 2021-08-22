@@ -97,16 +97,16 @@ func PublishGetController(c *gin.Context) {
 	}
 	for _, videoInfoTable := range data {
 		temp := video.VideoResultLess{
-			Vid:            videoInfoTable.VID,
-			Title:          videoInfoTable.Title,
-			Cover:          videoInfoTable.Cover,
-			Tags:           videoInfoTable.Tags,
-			CreateTime:     videoInfoTable.CreatedAt.Unix(),
-			WatchCounter:   "",
-			StarCounter:    "",
-			CommentCounter: "",
-			IsGet:          "",
-			IsCollect:      "",
+			Vid:        videoInfoTable.VID,
+			Title:      videoInfoTable.Title,
+			Cover:      videoInfoTable.Cover,
+			Tags:       videoInfoTable.Tags,
+			CreateTime: videoInfoTable.CreatedAt.Unix(),
+			//WatchCounter:   "",
+			//StarCounter:    "",
+			//CommentCounter: "",
+			//IsGet:          "",
+			//IsCollect:      "",
 		}
 		result.Result = append(result.Result, temp)
 	}

@@ -24,7 +24,6 @@ func ParticipationCreateController(c *gin.Context) {
 		Type:     TypeParticipation,
 		Title:    form.Title,
 		Content:  form.Content,
-		Tags:     form.Tags,
 		Datetime: time.Now(),
 		Constraint: mongo.ParticipationField{
 			RequiredNumber: form.RequiredNumber,

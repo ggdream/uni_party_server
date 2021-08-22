@@ -157,7 +157,7 @@ func (r *Redis) SAdd(key string, members ...interface{}) *redis.IntCmd {
 }
 
 // SRem 移除set里的成员
-func (r *Redis) SRem(key string, members ...interface{}) *redis.IntCmd {
+func (r *Redis) SRem(key string, members []interface{}) *redis.IntCmd {
 	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
 	defer cancelFunc()
 	return r.client.SRem(ctx, key, members...)
@@ -168,6 +168,20 @@ func (r *Redis) SIsMember(key string, members interface{}) (bool, error) {
 	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
 	defer cancelFunc()
 	return r.client.SIsMember(ctx, key, members).Result()
+}
+
+// SMIsMember 判断该member是否为此set的一员
+func (r *Redis) SMIsMember(key string, members ...interface{}) ([]bool, error) {
+	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
+	defer cancelFunc()
+	return r.client.SMIsMember(ctx, key, members...).Result()
+}
+
+// SMembers 获取此set的所有元素
+func (r *Redis) SMembers(key string) ([]string, error) {
+	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
+	defer cancelFunc()
+	return r.client.SMembers(ctx, key).Result()
 }
 
 // ZAdd 给Sorted Sets添加成员

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gateway/middleware"
 	"gateway/model/chat"
+	"gateway/tools/errno"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -31,7 +32,7 @@ func ChatHandler(c *gin.Context) {
 	// 获取GET请求的query参数
 	var queryModel chat.Transform
 	if err := c.ShouldBindQuery(&queryModel); err != nil {
-		// TODO: 返回错误自定义状态码
+		errno.Abort(c, errno.TypeParamsParsingErr)
 		return
 	}
 
@@ -45,8 +46,7 @@ func ChatHandler(c *gin.Context) {
 	defer func(conn *websocket.Conn) {
 		err := conn.Close()
 		if err != nil {
-			// TODO: 日志收集
-			fmt.Println(err)
+			return
 		}
 	}(conn)
 

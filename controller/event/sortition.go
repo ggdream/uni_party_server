@@ -24,7 +24,6 @@ func SortitionCreateController(c *gin.Context) {
 		Type:     TypeSortition,
 		Title:    form.Title,
 		Content:  form.Content,
-		Tags:     form.Tags,
 		Datetime: time.Now(),
 		Constraint: mongo.SortitionField{
 			RequiredNumber: form.RequiredNumber,

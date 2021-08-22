@@ -23,7 +23,6 @@ func VoteCreateController(c *gin.Context) {
 		Type:     TypeVote,
 		Title:    form.Title,
 		Content:  form.Content,
-		Tags:     form.Tags,
 		Datetime: time.Now(),
 		Constraint: mongo.VoteField{
 			MaxNumber: form.AllowedNumber,

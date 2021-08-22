@@ -11,8 +11,8 @@ type SearchReqModel struct {
 
 // SearchResModel 搜索消息：响应
 type SearchResModel struct {
-	Total int                `json:"total"`
-	Match []EventResultModel `json:"match"`
+	Total int           `json:"total"`
+	Match []EventResult `json:"match"`
 }
 
 type EventResultModel struct {

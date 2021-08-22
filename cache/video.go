@@ -2,6 +2,8 @@ package cache
 
 import (
 	"fmt"
+	"github.com/go-redis/redis/v8"
+	"time"
 )
 
 // Video 视频
@@ -25,7 +27,11 @@ func (v Video) AddUpload(uid uint, vid string) error {
 
 // AddCollect 用户收藏视频
 func (v Video) AddCollect(uid uint, vid string) error {
-	return client.LPush(v.joinUserCollectKey(uid), vid)
+	value := &redis.Z{
+		Score:  float64(time.Now().Unix()),
+		Member: vid,
+	}
+	return client.ZAdd(v.joinUserCollectKey(uid), value)
 }
 
 // DelUpload 用户删除上传视频
@@ -35,7 +41,8 @@ func (v Video) DelUpload(uid uint, vid string) error {
 
 // DelCollect 用户删除收藏视频
 func (v Video) DelCollect(uid uint, vid string) error {
-	return client.LRem(v.joinUserCollectKey(uid), 0, vid)
+	_, err := client.ZRem(v.joinUserCollectKey(uid), vid)
+	return err
 }
 
 // CountUpload 获取用户上传视频的数量
@@ -45,10 +52,10 @@ func (v Video) CountUpload(uid uint) (int64, error) {
 
 // CountCollect 获取用户收藏视频的数量
 func (v Video) CountCollect(uid uint) (int64, error) {
-	return client.LLen(v.joinUserCollectKey(uid))
+	return client.ZCard(v.joinUserCollectKey(uid))
 }
 
 // GetCollect 分页获取用户收藏视频
 func (v Video) GetCollect(uid uint, offset, number int64) ([]string, error) {
-	return client.LRange(v.joinUserCollectKey(uid), offset, offset+number-1)
+	return client.ZRevRange(v.joinUserCollectKey(uid), offset, offset+number-1)
 }

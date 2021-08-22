@@ -3,7 +3,7 @@ package event
 // SortitionDetailResModel 获取随机消息详情：响应
 type SortitionDetailResModel struct {
 	// 消息的基本元信息
-	eventResult
+	EventResult
 
 	Content string     `json:"content" form:"content"`
 	Detail  sortDetail `json:"event_detail" form:"event_detail"`
@@ -22,12 +22,11 @@ type sortDetail struct {
 
 // SortitionCreateReqModel 发布随机消息：请求
 type SortitionCreateReqModel struct {
-	Title          string   `json:"title" form:"title"`
-	Content        string   `json:"content" form:"content"`
-	Tags           []string `json:"tags" form:"tags"`
-	RequiredNumber int      `json:"required_number" form:"required_number"`
-	AllowedCancel  bool     `json:"allowed_cancel" form:"allowed_cancel"`
-	Deadline       int64    `json:"deadline" form:"deadline"`
+	Title          string `json:"title" form:"title"`
+	Content        string `json:"content" form:"content"`
+	RequiredNumber int    `json:"required_number" form:"required_number"`
+	AllowedCancel  bool   `json:"allowed_cancel" form:"allowed_cancel"`
+	Deadline       int64  `json:"deadline" form:"deadline"`
 }
 
 // SortitionCreateResModel 发布随机消息：响应

@@ -15,26 +15,30 @@ const (
 
 // EventDocument 消息文档体
 type EventDocument struct {
-	UID      uint
-	EID      string
-	Type     uint8
-	Title    string
-	Content  string
-	Tags     []string
-	Datetime time.Time
+	UID      uint   `json:"uid,omitempty"`
+	Avatar   string `json:"avatar,omitempty"`
+	Username string `json:"username,omitempty"`
+
+	EID      string    `json:"eid,omitempty"`
+	Type     uint8     `json:"type,omitempty"`
+	Title    string    `json:"title,omitempty"`
+	Content  string    `json:"content,omitempty"`
+	Datetime time.Time `json:"datetime"`
 	// 不同消息对应不同的约束
-	Constraint interface{}
+	Constraint interface{} `json:"constraint,omitempty"`
 }
 
 // SimpleEventDocument 简略消息文档体
 type SimpleEventDocument struct {
-	UID      uint
-	EID      string
-	Type     uint8
-	Title    string
-	Content  string
-	Tags     []string
-	Datetime time.Time
+	UID      uint   `json:"uid,omitempty"`
+	Avatar   string `json:"avatar,omitempty"`
+	Username string `json:"username,omitempty"`
+
+	EID      string    `json:"eid,omitempty"`
+	Type     int8      `json:"type,omitempty"`
+	Title    string    `json:"title,omitempty"`
+	Content  string    `json:"content,omitempty"`
+	Datetime time.Time `json:"datetime"`
 }
 
 // UpdateEventDocument 更新消息文档体
@@ -107,7 +111,7 @@ func (e *EventDocument) Delete(eid string) error {
 
 // Find 分页获取最近消息
 func (e *EventDocument) Find(uid uint, offset, number int64) ([]SimpleEventDocument, error) {
-	option := options.Find().SetSkip(offset).SetLimit(number).SetSort(map[string]interface{}{"_id": -1})
+	option := options.Find().SetSort(map[string]interface{}{"_id": -1}).SetSkip(offset).SetLimit(number)
 	cursor, err := client.Find(eventCollectionName, bson.D{{"uid", uid}}, option)
 	if err != nil {
 		return nil, err
@@ -118,7 +122,7 @@ func (e *EventDocument) Find(uid uint, offset, number int64) ([]SimpleEventDocum
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
 		err := cursor.Close(ctx)
 		if err != nil {
-			// TODO: log
+			return
 		}
 	}(cursor, ctx1)
 
@@ -161,7 +165,7 @@ func (e *EventDocument) FindIn(eids []string) ([]SimpleEventDocument, error) {
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
 		err := cursor.Close(ctx)
 		if err != nil {
-			// TODO: log
+			return
 		}
 	}(cursor, ctx1)
 

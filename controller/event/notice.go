@@ -13,7 +13,7 @@ import (
 )
 
 // NoticeCreateController 发布通知类消息
-func NoticeCreateController(c *gin.Context)  {
+func NoticeCreateController(c *gin.Context) {
 	var form event.NoticeCreateReqModel
 	if err := c.ShouldBind(&form); err != nil {
 		errno.Abort(c, errno.TypeParamsParsingErr)
@@ -43,7 +43,7 @@ func NoticeCreateController(c *gin.Context)  {
 			}
 			defer fileReader.Close()
 
-			timeoutCtx, cancel := context.WithTimeout(ctx, 10 * time.Second)
+			timeoutCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 			defer cancel()
 
 			filename := file.Filename
@@ -63,13 +63,18 @@ func NoticeCreateController(c *gin.Context)  {
 	}
 	wg.Wait()
 
+	// TODO: 计算出所选择的class uid，记录到redis里
+	//ca := cache.Event{}
+	//if err := ca.AddUnread(c.GetUint(middleware.KeyUID)); err != nil {
+	//
+	//}
+
 	// 	消息发布至MongoDB，得到eid
 	document := mongo.EventDocument{
 		UID:        c.GetUint("uid"),
 		Type:       TypeNotice,
 		Title:      form.Title,
 		Content:    form.Content,
-		Tags:       form.Tags,
 		Datetime:   time.Now(),
 		Constraint: mongo.NoticeField{Files: fileStore},
 	}
@@ -83,7 +88,7 @@ func NoticeCreateController(c *gin.Context)  {
 }
 
 // NoticeUpdateController 修改通知类消息
-func NoticeUpdateController(c *gin.Context)  {
+func NoticeUpdateController(c *gin.Context) {
 	var form event.NoticeUpdateReqModel
 	if err := c.ShouldBind(&form); err != nil {
 		errno.Abort(c, errno.TypeParamsParsingErr)
@@ -93,9 +98,9 @@ func NoticeUpdateController(c *gin.Context)  {
 	// 对MongoDB进行update操作
 	document := mongo.EventDocument{}
 	updateDocument := mongo.UpdateEventDocument{
-		Title:      form.Title,
-		Content:    form.Content,
-		Tags:       form.Tags,
+		Title:   form.Title,
+		Content: form.Content,
+		Tags:    form.Tags,
 	}
 	_, err := document.Update(form.EID, &updateDocument)
 	if err != nil {

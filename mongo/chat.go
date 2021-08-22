@@ -33,17 +33,15 @@ type ChatDocument struct {
 	// MID 消息ID，服务器收到消息时，无此字段；转发消息时，需要添加此字段
 	MID string
 	// Datetime 消息接受时间，服务器收到消息时，无此字段；转发消息时，需要添加此字段
-	Datetime int64
+	Datetime int
 	// Version 为方便后期协议修改，添加版本号字段
 	Version string
 }
-
 
 // Insert 插入消息
 func (c *ChatDocument) Insert() error {
 	return client.Insert(chatCollectionName, c)
 }
-
 
 // Delete 删除消息
 func (c *ChatDocument) Delete(mid string) error {
@@ -63,7 +61,7 @@ func (c *ChatDocument) Find(uid uint, offset, number int64) ([]ChatDocument, err
 	defer func(cursor *mongo.Cursor, ctx context.Context) {
 		err := cursor.Close(ctx)
 		if err != nil {
-			// TODO: log
+			return
 		}
 	}(cursor, ctx1)
 

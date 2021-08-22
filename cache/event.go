@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"gateway/tools/hashids"
 	"github.com/go-redis/redis/v8"
+	"strconv"
 	"time"
 )
 
@@ -21,6 +22,11 @@ var partJoinLuaScript string
 // 用户统计：Get使用 Sorted Sets；Attend使用 Sorted Sets
 // 用户发布使用：List；用户订阅使用：List
 type Event struct{}
+
+// joinUnreadKey 获取未读消息数量的hash-key
+func (e Event) joinUnreadKey(uid uint) string {
+	return fmt.Sprintf("event:unread:class:%d", uid)
+}
 
 // joinCountGetKey 获取Get消息的集合元素数量的string-key
 func (e Event) joinCountGetKey(eid string) string {
@@ -149,6 +155,25 @@ func (e Event) DoGet(uid uint, eid string) error {
 	return client.ZAdd(e.joinUserGetKey(uid), el)
 }
 
+// IsGet 获取用户是否Get消息
+func (e Event) IsGet(uid uint, eidList []interface{}) ([]bool, error) {
+	data, err := client.ZRange(e.joinUserGetKey(uid), 0, -1)
+	if err != nil {
+		return nil, err
+	}
+
+	getList := make([]bool, len(eidList))
+	for _, v := range data {
+		for i, v2 := range eidList {
+			if v == v2 {
+				getList[i] = true
+			}
+		}
+	}
+
+	return getList, nil
+}
+
 // JoinSortition 参加随机
 func (e Event) JoinSortition(uid uint, eid string) (int64, error) {
 	return client.SAdd(e.joinSortJoinKey(eid), uid).Result()
@@ -206,13 +231,79 @@ func (e Event) GetAttend(uid uint, offset, number int64) ([]string, error) {
 	return client.ZRevRange(e.joinUserAttendKey(uid), offset, offset+number-1)
 }
 
+// IsAttend 获取用户是否关注消息
+func (e Event) IsAttend(uid uint, eidList []interface{}) ([]bool, error) {
+	data, err := client.ZRange(e.joinUserAttendKey(uid), 0, -1)
+	if err != nil {
+		return nil, err
+	}
+
+	attendList := make([]bool, len(eidList))
+	for _, v := range data {
+		for i, v2 := range eidList {
+			if v == v2 {
+				attendList[i] = true
+			}
+		}
+	}
+
+	return attendList, nil
+}
+
 // GetPublish 获取用户发布的消息
 func (e Event) GetPublish(uid uint, offset, number int64) ([]string, error) {
-	if offset < 0 || number < 0 {
-		return nil, MustGEZeroErr
-	}
-	if number != 0 {
-		number--
-	}
 	return client.ZRevRange(e.joinUserPubKey(uid), offset, offset+number-1)
+}
+
+// AddUnread 以班级为单位，用事务IncrBy给field即学生uid
+func (e Event) AddUnread(uid uint) error {
+	key := e.joinUnreadKey(uid)
+
+	transaction := func(tx *redis.Tx) error {
+		pipe := tx.TxPipeline()
+		defer pipe.Close()
+
+		data, err := Student{}.Get(uid)
+		if err != nil {
+			return err
+		}
+
+		for _, v := range data {
+			err = pipe.HIncrBy(context.Background(), key, v, 1).Err()
+			if err != nil {
+				return err
+			}
+		}
+
+		_, err = pipe.Exec(context.Background())
+		if err != nil {
+			return pipe.Discard()
+		}
+		return nil
+	}
+
+	return client.client.Watch(client.context, transaction, key, Student{}.joinClassKey(uid))
+}
+
+// GetUnreadAndReset 获取某个学生的未读消息数
+func (e Event) GetUnreadAndReset(classUid, uid uint) (int64, error) {
+	pipe := client.client.Pipeline()
+	defer pipe.Close()
+
+	key := e.joinUnreadKey(classUid)
+	uidStr := strconv.Itoa(int(uid))
+
+	res, err := pipe.HGet(client.context, key, uidStr).Int64()
+	if err != nil {
+		return 0, err
+	}
+	if err = pipe.HSet(client.context, key, uidStr, 0).Err(); err != nil {
+		return 0, err
+	}
+
+	ctx, cancel := context.WithTimeout(client.context, client.timeout)
+	defer cancel()
+	_, err = pipe.Exec(ctx)
+
+	return res, err
 }

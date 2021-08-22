@@ -2,6 +2,7 @@ package es
 
 import (
 	"context"
+	"errors"
 	"github.com/olivere/elastic/v7"
 	"reflect"
 )
@@ -20,6 +21,7 @@ type VideoIndex struct {
 	Video string `json:"video"`
 
 	Datetime int64 `json:"datetime"`
+	Status   int8  `json:"status"`
 }
 
 // Insert 插入新消息
@@ -42,15 +44,27 @@ func (v *VideoIndex) Delete(vid string) error {
 }
 
 // QueryByTitle 分页按视频标题模糊匹配查询视频
-func (v *VideoIndex) QueryByTitle(title string, offset, number int) ([]VideoIndex, error) {
+func (v *VideoIndex) QueryByTitle(title string, offset, number int) (int, []VideoIndex, error) {
 	query := elastic.NewMatchQuery("title", title)
+
+	aggs := elastic.NewCardinalityAggregation().Field("vid")
+	ctx1, cancel1 := context.WithTimeout(client.context, client.timeout)
+	defer cancel1()
+	cData, err := client.es.Search().Index(eventIndexName).Query(query).Aggregation("total", aggs).Size(0).Do(ctx1)
+	if err != nil {
+		return 0, nil, err
+	}
+	agg, found := cData.Aggregations.ValueCount("total")
+	if !found {
+		return 0, nil, errors.New("count not found")
+	}
 
 	ctx, cancel := context.WithTimeout(client.context, client.timeout)
 	defer cancel()
 
 	data, err := client.es.Search().Index(videoIndexName).Query(query).From(offset).Size(number).Pretty(true).Do(ctx)
 	if err != nil {
-		return nil, err
+		return 0, nil, err
 	}
 
 	var result []VideoIndex
@@ -58,5 +72,5 @@ func (v *VideoIndex) QueryByTitle(title string, offset, number int) ([]VideoInde
 		result = append(result, record.(VideoIndex))
 	}
 
-	return result, nil
+	return int(*agg.Value), result, nil
 }

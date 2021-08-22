@@ -3,6 +3,7 @@ package sql
 import (
 	"gateway/tools/hashids"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 var (
@@ -19,7 +20,7 @@ type VideoInfoTable struct {
 	Cover    string
 	Video    string
 	Location string
-	Status   uint8	// 待审核、未通过、正常、锁定、被平台删除、用户自行删除
+	Status   int8 // 待审核、未通过、正常、锁定、被平台删除、用户自行删除
 }
 
 func (VideoInfoTable) TableName() string {
@@ -52,12 +53,18 @@ func (e *VideoInfoTable) Query(vid string) error {
 	return db.Where(e).Find(e).Error
 }
 
+// QueryPush 分页查询最新
+func (e *VideoInfoTable) QueryPush(id int, number int) (data []VideoInfoTable, err error) {
+	err = db.Where("id < ?", id).Order("id DESC").Limit(number).Find(&data).Error
+	return
+}
+
 // QueryPage 分页查询视频记录
 func (e *VideoInfoTable) QueryPage(uid uint, offset, number int) ([]VideoInfoTable, error) {
 	var result []VideoInfoTable
 	e.UID = uid
 
-	err := db.Where(e).Limit(number).Offset(offset).Order("id DESC").Find(&result).Error
+	err := db.Where(e).Order("id DESC").Limit(number).Offset(offset).Find(&result).Error
 	if err != nil {
 		return nil, err
 	}
@@ -66,16 +73,17 @@ func (e *VideoInfoTable) QueryPage(uid uint, offset, number int) ([]VideoInfoTab
 }
 
 // QueryIn 多值查询视频记录
-func (e *VideoInfoTable) QueryIn(uid uint, vidList []string) ([]VideoInfoTable, error) {
-	var result []VideoInfoTable
-	e.UID = uid
-
-	err := db.Where("vid IN ?", vidList).Find(&result).Error
-	if err != nil {
-		return nil, err
+func (e *VideoInfoTable) QueryIn(vidList []string) (data []VideoInfoTable, err error) {
+	clauses := clause.OrderBy{
+		Expression: clause.Expr{
+			SQL:                "FIELD(vid, ?)",
+			Vars:               []interface{}{vidList},
+			WithoutParentheses: true,
+		},
 	}
-
-	return result, nil
+	//SELECT * FROM users ORDER BY FIELD(id,1,2,3)
+	err = db.Where("vid IN ?", vidList).Clauses(clauses).Find(&data).Error
+	return
 }
 
 // Delete 删除视频记录
