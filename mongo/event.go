@@ -99,20 +99,20 @@ func (e *EventDocument) Update(eid string, value *UpdateEventDocument) (int64, e
 
 	return client.Update(
 		eventCollectionName,
-		bson.D{{"eid", eid}},
-		bson.D{{"$set", res}},
+		bson.D{{Key: "eid", Value: eid}},
+		bson.D{{Key: "$set", Value: res}},
 	)
 }
 
 // Delete 删除消息
 func (e *EventDocument) Delete(eid string) error {
-	return client.Delete(eventCollectionName, bson.D{{"eid", eid}})
+	return client.Delete(eventCollectionName, bson.D{{Key: "eid", Value: eid}})
 }
 
 // Find 分页获取最近消息
 func (e *EventDocument) Find(uid uint, offset, number int64) ([]SimpleEventDocument, error) {
 	option := options.Find().SetSort(map[string]interface{}{"_id": -1}).SetSkip(offset).SetLimit(number)
-	cursor, err := client.Find(eventCollectionName, bson.D{{"uid", uid}}, option)
+	cursor, err := client.Find(eventCollectionName, bson.D{{Key: "uid", Value: uid}}, option)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +142,7 @@ func (e *EventDocument) Find(uid uint, offset, number int64) ([]SimpleEventDocum
 
 // FindOneDetail 获取单条消息详情
 func (e *EventDocument) FindOneDetail(eid string) (event EventDocument, err error) {
-	res := client.FindOne(eventCollectionName, bson.D{{"eid", eid}})
+	res := client.FindOne(eventCollectionName, bson.D{{Key: "eid", Value: eid}})
 	if err = res.Err(); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (e *EventDocument) FindOneDetail(eid string) (event EventDocument, err erro
 
 func (e *EventDocument) FindIn(eids []string) ([]SimpleEventDocument, error) {
 	option := options.Find().SetSort(map[string]interface{}{"_id": -1})
-	filter := bson.D{{"eid", bson.D{{"$in", bson.A{eids}}}}}
+	filter := bson.D{{Key: "eid", Value: bson.D{{Key: "$in", Value: bson.A{eids}}}}}
 
 	cursor, err := client.Find(eventCollectionName, filter, option)
 	if err != nil {

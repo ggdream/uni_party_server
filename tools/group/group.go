@@ -5,6 +5,8 @@ import (
 	"unsafe"
 )
 
+type uStruct = map[string]map[string]map[string]map[string][]string
+
 // Group 用map描述大学内部结构tree
 // 实现了:
 // 1.解析高校发送过来的学生信息表，解析到 Group 的data字段和info字段
@@ -12,7 +14,7 @@ import (
 // 3.info字段提供入MySQL的行数据片段
 type Group struct {
 	// 校区、学院、年级、专业、班级
-	data map[string]map[string]map[string]map[string][]string
+	data uStruct
 	// 为了入数据库，创建组级别账户
 	info map[int][][5]string
 }
@@ -20,7 +22,7 @@ type Group struct {
 // NewGroup 实例化一个 Group
 func NewGroup() *Group {
 	return &Group{
-		data: map[string]map[string]map[string]map[string][]string{},
+		data: uStruct{},
 		info: map[int][][5]string{},
 	}
 }
@@ -34,7 +36,7 @@ func (d *Group) GetInfo() map[int][][5]string {
 func (d Group) Add(campus, college, grade, major, class string) {
 	// 校区
 	if d.data[campus] == nil {
-		d.data[campus] = make(map[string]map[string]map[string][]string, 0)
+		d.data[campus] = map[string]map[string]map[string][]string{}
 		if d.info[6] == nil {
 			d.info[6] = make([][5]string, 0)
 		}
@@ -43,7 +45,7 @@ func (d Group) Add(campus, college, grade, major, class string) {
 
 	// 学院
 	if d.data[campus][college] == nil {
-		d.data[campus][college] = make(map[string]map[string][]string, 0)
+		d.data[campus][college] = map[string]map[string][]string{}
 		if d.info[5] == nil {
 			d.info[5] = make([][5]string, 0)
 		}
@@ -52,7 +54,7 @@ func (d Group) Add(campus, college, grade, major, class string) {
 
 	// 年级
 	if d.data[campus][college][grade] == nil {
-		d.data[campus][college][grade] = make(map[string][]string, 0)
+		d.data[campus][college][grade] = map[string][]string{}
 		if d.info[4] == nil {
 			d.info[4] = make([][5]string, 0)
 		}
@@ -82,8 +84,8 @@ func (d Group) Add(campus, college, grade, major, class string) {
 	d.info[2] = append(d.info[2], [5]string{campus, college, grade, major, class})
 }
 
-// ToJSON map转json字符串，用于高校人员结构持久化
-func (d *Group) ToJSON() (string, error) {
+// DataToJSON map转json字符串，用于高校人员结构持久化
+func (d *Group) DataToJSON() (string, error) {
 	res, err := json.Marshal(d.data)
 	if err != nil {
 		return "", err
@@ -91,3 +93,14 @@ func (d *Group) ToJSON() (string, error) {
 
 	return *(*string)(unsafe.Pointer(&res)), nil
 }
+
+// InfoToJSON map转json字符串，用于高校人员结构持久化
+func (d *Group) InfoToJSON() (string, error) {
+	res, err := json.Marshal(d.info)
+	if err != nil {
+		return "", err
+	}
+
+	return *(*string)(unsafe.Pointer(&res)), nil
+}
+

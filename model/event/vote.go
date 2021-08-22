@@ -3,7 +3,7 @@ package event
 // VoteDetailResModel 获取投票消息详情：响应
 type VoteDetailResModel struct {
 	// 消息的基本元信息
-	eventResult
+	EventResult
 
 	Content string     `json:"content" form:"content"`
 	Detail  voteDetail `json:"event_detail" form:"event_detail"`

@@ -57,7 +57,7 @@ type eventResult struct {
 	GetCounter		int			`json:"get_counter" form:"get_counter"`
 	WatchCounter	int			`json:"watch_counter" form:"watch_counter"`
 	CommentCounter	int			`json:"comment_counter" form:"comment_counter"`
-	UserInfo		userInfo	`json:"userinfo" form:"userinfo"`
+	UserInfo		UserInfo	`json:"userinfo" form:"userinfo"`
 	IsGet			bool		`json:"is_get" form:"is_get"`
 	IsCollect		bool		`json:"is_collect" form:"is_collect"`
 }

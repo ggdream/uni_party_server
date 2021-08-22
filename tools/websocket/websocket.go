@@ -53,7 +53,7 @@ func (w *WebSocket) handle(wrapper *Wrapper) error {
 	// }
 
 	// 封装响应消息体
-	datetime := int(time.Now().UnixNano())
+	datetime := time.Now().UnixNano()
 	wrapper.Modify(datetime, "xxxx")
 
 	document := mongo.ChatDocument{

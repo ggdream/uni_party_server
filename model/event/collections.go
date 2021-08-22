@@ -9,5 +9,5 @@ type GetCollectionReqModel struct {
 // GetCollectionResModel 获取用户收藏的消息：响应
 type GetCollectionResModel struct {
 	Total  int           `json:"total" form:"total"`
-	Result []eventResult `json:"result" form:"result"`
+	Result []EventResult `json:"result" form:"result"`
 }

@@ -13,8 +13,8 @@ const (
 )
 
 type PartDocument struct {
-	UID      uint      `json:"uid"`
-	EID      string    `json:"eid"`
+	UID uint   `json:"uid"`
+	EID string `json:"eid"`
 }
 
 // Insert 插入用户新报名
@@ -29,7 +29,7 @@ func (s *PartDocument) Insert(requiredNumber int) error {
 	}
 
 	transaction := func(sc mongo.SessionContext) error {
-		filter := bson.D{{"eid", s.EID}}
+		filter := bson.D{{Key: "eid", Value: s.EID}}
 		count, err := client.client.Database(client.database).Collection(partCollectionName).CountDocuments(sc, filter)
 		if err != nil {
 			return err
@@ -55,11 +55,10 @@ func (s *PartDocument) Insert(requiredNumber int) error {
 	return err
 }
 
-
 // Query 查询报名参加情况
 func (s *PartDocument) Query(eid string, offset, number int64) (res []VoteDocument, err error) {
 	option := options.Find().SetSkip(offset).SetLimit(number)
-	cursor, err := client.Find(partCollectionName, bson.D{{"eid", eid}}, option)
+	cursor, err := client.Find(partCollectionName, bson.D{{Key: "eid", Value: eid}}, option)
 	if err != nil {
 		return nil, err
 	}

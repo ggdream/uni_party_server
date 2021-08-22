@@ -47,7 +47,7 @@ type UserVideoCollectionsResModel struct {
 // videoResult 包含用户信息的视频结构
 type videoResult struct {
 	Vid            string   `json:"vid"`
-	UserInfo       userInfo `json:"userinfo"`
+	UserInfo       UserInfo `json:"userinfo"`
 	Title          string   `json:"title"`
 	Cover          string   `json:"cover"`
 	Tags           string   `json:"tags"`

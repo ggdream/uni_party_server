@@ -1,30 +1,55 @@
 package auth
 
+// VerifyStudentReqModel 学生认证：请求
+type VerifyStudentReqModel struct {
+}
 
-// AuthVerifyStudentReqModel 学生认证：请求
-type AuthVerifyStudentReqModel struct {}
+// VerifyStudentResModel 学生认证：响应
+type VerifyStudentResModel struct{}
 
-// AuthVerifyStudentResModel 学生认证：响应
-type AuthVerifyStudentResModel struct {}
+// VerifyCompanyReqModel 公司认证：请求
+type VerifyCompanyReqModel struct{}
 
+// VerifyCompanyResModel 公司认证：响应
+type VerifyCompanyResModel struct{}
 
-// AuthVerifyCompanyReqModel 公司认证：请求
-type AuthVerifyCompanyReqModel struct {}
+// VerifyUniversityReqModel 高校认证：请求
+type VerifyUniversityReqModel struct{}
 
-// AuthVerifyCompanyResModel 公司认证：响应
-type AuthVerifyCompanyResModel struct {}
+// VerifyUniversityResModel 高校认证：响应
+type VerifyUniversityResModel struct{}
 
+// VerifyInstitutionReqModel 机构认证：请求
+type VerifyInstitutionReqModel struct{}
 
-// AuthVerifyUniversityReqModel 高校认证：请求
-type AuthVerifyUniversityReqModel struct {}
+// VerifyInstitutionResModel 机构认证：响应
+type VerifyInstitutionResModel struct{}
 
-// AuthVerifyUniversityResModel 高校认证：响应
-type AuthVerifyUniversityResModel struct {}
+// UniversityStructReqModel 学校的系统结构
+type UniversityStructReqModel struct {
+	Departments []string `json:"departments" form:"departments"`
 
+	Struct map[int][]SingleStruct `json:"struct" form:"struct"`
 
-// AuthVerifyInstitutionReqModel 机构认证：请求
-type AuthVerifyInstitutionReqModel struct {}
+	Students []struct {
+		Name   string `json:"name"`
+		SID    string `json:"sid"`
+		CardID string `json:"card_id"`
 
-// AuthVerifyInstitutionResModel 机构认证：响应
-type AuthVerifyInstitutionResModel struct {}
+		Campus  string `json:"campus"`
+		College string `json:"college"`
+		Grade   uint8  `json:"grade"`
+		Major   string `json:"major"`
+		Class   string `json:"class"`
+	} `json:"students" form:"students"`
+}
 
+type SingleStruct struct {
+	Campus  string `json:"campus"`
+	College string `json:"college"`
+	Grade   uint8  `json:"grade"`
+	Major   string `json:"major"`
+	Class   string `json:"class"`
+
+	UID uint `json:"uid"`
+}

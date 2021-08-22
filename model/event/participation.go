@@ -3,7 +3,7 @@ package event
 // ParticipationDetailResModel 获取报名消息详情：响应
 type ParticipationDetailResModel struct {
 	// 消息的基本元信息
-	eventResult
+	EventResult
 
 	Content string     `json:"content" form:"content"`
 	Detail  partDetail `json:"event_detail" form:"event_detail"`

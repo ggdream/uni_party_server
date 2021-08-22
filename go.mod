@@ -9,6 +9,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.3
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/websocket v1.4.2
+	github.com/olivere/elastic/v7 v7.0.27
 	github.com/qiniu/go-sdk/v7 v7.9.8
 	github.com/speps/go-hashids/v2 v2.0.1
 	go.mongodb.org/mongo-driver v1.7.1
@@ -17,7 +18,6 @@ require (
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.1.1
 	gorm.io/gorm v1.21.12
-	github.com/olivere/elastic/v7 v7.0.27
 )
 
 require (
@@ -44,9 +44,11 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.2 // indirect
+	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/klauspost/compress v1.12.2 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
+	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect

@@ -24,7 +24,7 @@ type Wrapper struct {
 	// MID 消息ID，服务器收到消息时，无此字段；转发消息时，需要添加此字段
 	MID string `json:"mid,omitempty"`
 	// Datetime 消息接受时间，服务器收到消息时，无此字段；转发消息时，需要添加此字段
-	Datetime int `json:"datetime,omitempty"`
+	Datetime int64 `json:"datetime,omitempty"`
 	// Version 为方便后期协议修改，添加版本号字段
 	Version string `json:"version"`
 	// Signature 内容签名，服务器收到消息时，有此字段；转发消息时，需要添加此字段
@@ -38,7 +38,7 @@ func NewWrapper(data []byte) (wrapper *Wrapper, err error) {
 }
 
 // Modify 修改原有反序列化号的内容为要转发的消息
-func (w *Wrapper) Modify(datetime int, mid string) {
+func (w *Wrapper) Modify(datetime int64, mid string) {
 	// 清空无用字段
 	w.Signature = ""
 

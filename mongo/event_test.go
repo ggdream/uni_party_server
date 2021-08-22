@@ -20,7 +20,6 @@ func TestEventCollection_Insert(t *testing.T) {
 		Type:     0,
 		Title:    "网址",
 		Content:  "分享一下",
-		Tags:     []string{"资源", "魔咔啦咔"},
 		Datetime: time.Now(),
 	}
 	if err := event.Insert(); err != nil {

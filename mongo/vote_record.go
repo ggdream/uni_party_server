@@ -27,7 +27,7 @@ func (v *VoteDocument) Insert() error {
 // Query 查询投票情况
 func (v *VoteDocument) Query(eid string, offset, number int64) ([]VoteDocument, error) {
 	option := options.Find().SetSkip(offset).SetLimit(number)
-	cursor, err := client.Find(voteCollectionName, bson.D{{"eid", eid}}, option)
+	cursor, err := client.Find(voteCollectionName, bson.D{{Key: "eid", Value: eid}}, option)
 	if err != nil {
 		return nil, err
 	}
