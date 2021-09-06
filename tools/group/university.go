@@ -2,38 +2,47 @@ package group
 
 import (
 	"fmt"
-	"gateway/model/auth"
 )
 
-// Head 头结点
-type Head struct {
-	Rank    int8    `json:"rank,omitempty"`
-	Include *[]*Node `json:"include,omitempty"`
-}
-
-// Node 指针节点
-type Node struct {
-	UID      uint    `json:"uid,omitempty"`
-	Mark     string  `json:"mark,omitempty"`
-	Children *[]*Node `json:"children,omitempty"`
-
+type SingleStruct struct {
 	Campus  string `json:"campus"`
 	College string `json:"college"`
 	Grade   uint8  `json:"grade"`
 	Major   string `json:"major"`
 	Class   string `json:"class"`
+
+	UID uint `json:"uid"`
+}
+
+// Head 头结点
+type Head struct {
+	Rank    int8
+	Include *[]*Node
+}
+
+// Node 指针节点
+type Node struct {
+	UID      uint
+	Mark     string
+	Children *[]*Node
+
+	Campus  string
+	College string
+	Grade   uint8
+	Major   string
+	Class   string
 }
 
 // NewUniversity 实例化一个大学结构
 // data：校区、学院、年级、专业、班级、uid
 // department: [2]interface{}: [0]为uid, [1]为名称
-func NewUniversity(name string, uid uint, departments [][2]interface{}, data map[int][]auth.SingleStruct) *[6]*Head {
+func NewUniversity(name string, uid uint, departments [][2]interface{}, data map[int][]SingleStruct) *[6]*Head {
 	var result [6]*Head
 
 	// 学校
 	university := &Node{
-		UID:      uid,
-		Mark:     name,
+		UID:  uid,
+		Mark: name,
 	}
 	result[0] = &Head{
 		Rank:    0,

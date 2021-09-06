@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-func init() {
-	if err := Init(); err != nil {
-		panic(err)
-	}
-}
+// func init() {
+// 	if err := Init(); err != nil {
+// 		panic(err)
+// 	}
+// }
 
 // 插入测试
 func TestEventCollection_Insert(t *testing.T) {

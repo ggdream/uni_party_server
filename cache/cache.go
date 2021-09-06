@@ -129,10 +129,17 @@ func (r *Redis) HGet(key, field string) *redis.StringCmd {
 }
 
 // HMGet 获取多组field和value
-func (r *Redis) HMGet(key string, field ...string) (interface{}, error) {
+func (r *Redis) HMGet(key string, field ...string) ([]interface{}, error) {
 	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
 	defer cancelFunc()
 	return r.client.HMGet(ctx, key, field...).Result()
+}
+
+// HGetAll 获取多组field和value
+func (r *Redis) HGetAll(key string, field ...string) (map[string]string, error) {
+	ctx, cancelFunc := context.WithTimeout(r.context, r.timeout)
+	defer cancelFunc()
+	return r.client.HGetAll(ctx, key).Result()
 }
 
 // HDel 删除字段
