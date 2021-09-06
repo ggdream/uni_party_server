@@ -3,6 +3,8 @@ package cache
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"gateway/tools/hashids"
@@ -29,6 +31,7 @@ func (p Pan) joinRecordShareKey(rand, password string) string {
 }
 
 // joinxRecordShareKey string: 以joinUserShareKey的value为参数
+// value为`uid:hash`
 func (p Pan) joinxRecordShareKey(randPwd string) string {
 	return fmt.Sprintf("pan:record:share:%s", randPwd)
 }
@@ -69,7 +72,7 @@ func (p Pan) Share(uid uint, hash string, expireTime int8) (string, string, erro
 	password := random.New(4)
 	postTime := p.transformExpireTime(expireTime)
 
-	err := client.Set(p.joinRecordShareKey(rand, password), hash, postTime)
+	err := client.Set(p.joinRecordShareKey(rand, password), fmt.Sprintf("%d:%s", uid, hash), postTime)
 	if err != nil {
 		return "", "", err
 	}
@@ -144,8 +147,19 @@ func (p Pan) GetShareArchive(uid uint) ([]string, error) {
 }
 
 // GetShare 接收者输入密码，查看文件
-func (p Pan) GetShare(rand, password string) (string, error) {
-	return client.Get(p.joinRecordShareKey(rand, password)).Result()
+func (p Pan) GetShare(rand, password string) (uint, string, error) {
+	data, err := client.Get(p.joinRecordShareKey(rand, password)).Result()
+	if err != nil {
+		return 0, "", err
+	}
+
+	dataList := strings.Split(data, ":")
+	uid, err := strconv.ParseUint(dataList[0], 10, 64)
+	if err != nil {
+		return 0, "", err
+	}
+
+	return uint(uid), dataList[1], nil
 }
 
 // SetToken 允许下载文件的令牌

@@ -94,17 +94,18 @@ func (p *PanDocument) Query(uid uint, hash string) error {
 	return res.Decode(p)
 }
 
-
 // Delete 删除文件/文件夹
-func (p *PanDocument) Delete(uid uint, dirHash, thisHash string) error {
+func (p *PanDocument) Delete(uid uint, dirHash, thisHash string) ([]string, error) {
 	err := p.Query(uid, dirHash)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	var delFiles []string
 	for idx, child := range p.Children {
 		if child.Hash == thisHash {
 			if child.Type != oss.Tree {
+				delFiles = append(delFiles, child.Hash)
 				if idx+1 < len(p.Children) {
 					p.Children = append(p.Children[0:idx], p.Children[idx+1:]...)
 				} else {
@@ -115,7 +116,7 @@ func (p *PanDocument) Delete(uid uint, dirHash, thisHash string) error {
 				var hashList []string
 				err = p.del(uid, thisHash, &hashList)
 				if err != nil {
-					return err
+					return nil, err
 				}
 				err = p.removeMany(uid, hashList)
 			}
@@ -123,7 +124,7 @@ func (p *PanDocument) Delete(uid uint, dirHash, thisHash string) error {
 		}
 	}
 
-	return err
+	return delFiles, err
 }
 
 func (p *PanDocument) del(uid uint, dirHash string, hashList *[]string) error {
