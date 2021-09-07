@@ -127,7 +127,13 @@ func (p *PanDocumentV2) Rename(uid uint, name, hash string) error {
 }
 
 // Query 获取文件夹下数据
-func (p *PanDocumentV2) Query(hash string, dest *PanChildV2) error {
+func (p *PanDocumentV2) Query(uid uint, hash string, dest *PanChildV2) error {
+	if err := p.unmarshal(uid); err != nil {
+		return err
+	}
+
+	*dest = *p.findNodeByHash(hash)
+
 	return nil
 }
 
