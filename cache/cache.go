@@ -16,6 +16,8 @@ func Init() {
 	if err := client.Ping(); err != nil {
 		panic(err)
 	}
+
+	redsyncClient = NewRedSync(client.client)
 }
 
 // Redis 适用于本项目的Redis封装
