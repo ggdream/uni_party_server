@@ -1,0 +1,16 @@
+syntax = "proto3";
+option go_package = "./;ggrpc";
+
+
+message Request {
+  string name = 1;
+}
+
+message Response {
+  string res = 1;
+}
+
+service Greet {
+  rpc Say(Request) returns(Response);
+}
+

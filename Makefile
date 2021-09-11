@@ -25,9 +25,9 @@ kafka:
 etcd:
 	docker run -d --rm --name myetcd -p 2379:2379 -e ALLOW_NONE_AUTHENTICATION=yes bitnami/etcd:3.5.0
 
-.PHONY: protocenv
-protocenv:
-    go mod download
-    go install github.com/gogo/protobuf/protoc-gen-gogo
-    go install github.com/gogo/protobuf/protoc-gen-gofast
-    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0
+#.PHONY: protocenv
+#protocenv:
+#    go mod download
+#    go install github.com/gogo/protobuf/protoc-gen-gogo
+#    go install github.com/gogo/protobuf/protoc-gen-gofast
+#    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.1.0

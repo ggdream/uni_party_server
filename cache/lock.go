@@ -2,6 +2,7 @@ package cache
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -11,16 +12,19 @@ import (
 	"gateway/tools/dlock"
 )
 
+const (
+	DLockNameDelay = "dlock:delay"
+)
 
-// const (
-// 	DLockName = value
-// )
+var (
+	DLockCannotRelease = errors.New("cannot release redis dlock")
+)
 
-var _ dlock.DLock = (*distributedLock)(nil)
+var _ dlock.DLock = (*DistributedLock)(nil)
 var redsyncClient *redSync
 
 // distributedLock redis版分布式锁
-type distributedLock struct {
+type DistributedLock struct {
 	mutex *redsync.Mutex
 
 	timeout time.Duration
@@ -28,17 +32,17 @@ type distributedLock struct {
 }
 
 // TryLock 尝试获取锁
-func (l *distributedLock) TryLock() error {
+func (l *DistributedLock) TryLock() error {
 	return l.mutex.Lock()
 }
 
 // Release 释放锁
-func (l *distributedLock) Release() (bool, error) {
+func (l *DistributedLock) Release() (bool, error) {
 	return l.mutex.Unlock()
 }
 
 // TryLockContext 尝试获取锁
-func (l *distributedLock) TryLockContext() error {
+func (l *DistributedLock) TryLockContext() error {
 	ctx, cancel := context.WithTimeout(l.context, l.timeout)
 	defer cancel()
 
@@ -46,7 +50,7 @@ func (l *distributedLock) TryLockContext() error {
 }
 
 // UnlockContext 释放锁
-func (l *distributedLock) ReleaseContext() (bool, error) {
+func (l *DistributedLock) ReleaseContext() (bool, error) {
 	ctx, cancel := context.WithTimeout(l.context, l.timeout)
 	defer cancel()
 
@@ -54,8 +58,8 @@ func (l *distributedLock) ReleaseContext() (bool, error) {
 }
 
 // NewDLock 创建一个基于Redis的分布式锁实例
-func NewDLock(name string) *distributedLock {
-	return &distributedLock{
+func NewDLock(name string) *DistributedLock {
+	return &DistributedLock{
 		mutex:   redsyncClient.newMutex(name),
 		timeout: 600 * time.Millisecond,
 		context: context.Background(),
